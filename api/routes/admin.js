@@ -14,13 +14,14 @@ router.post('/add', async function (req, res, next) {
   
      const salt =  await bcrypt.genSaltSync();
    var hash =   await bcrypt.hashSync(req.body.password, salt);
+   saltedpassword = hash;
     }
    catch(err)
   {
     console.log("saltingerr..."+err);
   }
    
-    let q1 = `INSERT IGNORE INTO user (username, password, email) values ("${req.body.username}","${hash} ", "${req.body.email}")`;
+    let q1 = `INSERT IGNORE INTO user (username, password, email) values ("${req.body.username}","${hash}", "${req.body.email}")`;
     await db.query(q1)
     console.log('user saved')
 
