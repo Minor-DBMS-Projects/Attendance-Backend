@@ -1,0 +1,252 @@
+{
+"InstructorId": "IS108",
+"Instructor" : "Michael Owen",
+"Date":"2019/2/16",
+"Class":"073BCX",
+"Year" : "3",
+"Part" : "2",
+"SubjectId":"CS109",
+"Subject":"Artificial Intelligence",
+"Students" : [
+    {
+      "Roll": "073BCX501",
+      "Name": "Treena Smits",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX502",
+      "Name": "Lexie Brundage",
+      "Status": "A"
+    },
+    {
+      "Roll": "073BCX503",
+      "Name": "Tera Cobble",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX504",
+      "Name": "Xavier Medley",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX505",
+      "Name": "Paola Gibbon",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX506",
+      "Name": "Shu Vinton",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX507",
+      "Name": "Ward Murdoch",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX508",
+      "Name": "Kristyn Graydon",
+      "Status": "A"
+    },
+    {
+      "Roll": "073BCX509",
+      "Name": "Neoma Bridgewater",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX510",
+      "Name": "Ione Popovich",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX511",
+      "Name": "Stella Mcgann",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX512",
+      "Name": "Marcia Saxton",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX513",
+      "Name": "Roxanne Kleve",
+      "Status": "A"
+    },
+    {
+      "Roll": "073BCX514",
+      "Name": "Leola Kitamura",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX515",
+      "Name": "Clara Gill",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX516",
+      "Name": "Albertine Craft",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX517",
+      "Name": "Quincy Goldston",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX518",
+      "Name": "Angla Vrba",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX519",
+      "Name": "Winnie Novotny",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX520",
+      "Name": "Astrid Luckey",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX521",
+      "Name": "Hunter Mercedes",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX522",
+      "Name": "Riva Kubat",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX523",
+      "Name": "Randee Ceniceros",
+      "Status": "A"
+    },
+    {
+      "Roll": "073BCX524",
+      "Name": "Celena Nowakowski",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX525",
+      "Name": "Cuc Steinert",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX526",
+      "Name": "Barrett Cutlip",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX527",
+      "Name": "Bella Eynon",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX528",
+      "Name": "Rosalia Kuhl",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX529",
+      "Name": "Gordon Strang",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX530",
+      "Name": "Tracey Cornwell",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX531",
+      "Name": "Lorinda Kemper",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX532",
+      "Name": "Bula Seevers",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX533",
+      "Name": "Concha Lambrecht",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX534",
+      "Name": "Celinda Sudler",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX535",
+      "Name": "Maida Shrout",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX536",
+      "Name": "Telma Stryker",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX537",
+      "Name": "Brianna Valla",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX538",
+      "Name": "Elicia Mitzel",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX539",
+      "Name": "Alethea Hobby",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX540",
+      "Name": "Berniece Willms",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX541",
+      "Name": "Meri Trapp",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX542",
+      "Name": "Marcelene Hames",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX543",
+      "Name": "Tawana Strozier",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX544",
+      "Name": "Mechelle Foston",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX545",
+      "Name": "Reggie Majka",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX546",
+      "Name": "Ernesto Knick",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX547",
+      "Name": "Stacee Schear",
+      "Status": "P"
+    },
+    {
+      "Roll": "073BCX548",
+      "Name": "Del Hutzler",
+      "Status": "P"
+    }
+  ]
+}

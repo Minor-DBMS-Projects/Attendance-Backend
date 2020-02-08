@@ -1,0 +1,252 @@
+  {
+    "InstructorId": "IS101",
+    "Instructor": "Aman Shakya",
+    "Date": "2019/2/16",
+    "Class": "073BCT",
+    "Year": "3",
+    "Part": "2",
+    "SubjectId": "CS101",
+    "Subject": "DBMS",
+    "Students": [
+      {
+        "Roll": "073BCT501",
+        "Name": "AAKALPA ARYAL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT502",
+        "Name": "AASHISH LAMICHHANE",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT503",
+        "Name": "ABHISHEK THAPA",
+        "Status": "P"
+      },
+    {
+        "Roll": "073BCT504",
+        "Name": "ADITYA SHAH",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT505",
+        "Name": "AMIT KUMAR MAHATO",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT506",
+        "Name": "ANIMESH TIMSINA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT507",
+        "Name": "ANUSANDHAN POKHREL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT508",
+        "Name": "ASHIM SHARMA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT509",
+        "Name": "ASHISH AGARWAL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT510",
+        "Name": "AVHINAV DEO",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT511",
+        "Name": "BAIBHAV BISTA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT512",
+        "Name": "BUDDHA THAPA MAGAR",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT514",
+        "Name": "DEEPAK PANDEY",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT515",
+        "Name": "DILOCHAN KARKI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT516",
+        "Name": "DINESH DEVKOTA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT517",
+        "Name": "DIPESH LABH",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT518",
+        "Name": "KRISHNA DHAKAL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT519",
+        "Name": "KRISHNA PRASAD PANTHI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT520",
+        "Name": "LAKSHYA PANDIT",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT521",
+        "Name": "LUMANTI DANGOL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT522",
+        "Name": "MAHARSHI BHUSAL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT523",
+        "Name": "MOHIT KEDIA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT524",
+        "Name": "NABIN KHANAL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT525",
+        "Name": "PARIDHI PARAJULI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT526",
+        "Name": "PRABIN THAPA MAGAR",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT527",
+        "Name": "PRASANGA DHUNGEL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT528",
+        "Name": "PRASHANT TANDAN",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT529",
+        "Name": "PRATIMA SAPKOTA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT530",
+        "Name": "PRIYA JHA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT531",
+        "Name": "RABINDRA REGMI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT532",
+        "Name": "RAJAT PARAJULI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT533",
+        "Name": "REBATI RAMAN GAIRE",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT534",
+        "Name": "RISHIKESH GIRI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT535",
+        "Name": "RONAST SUBEDI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT536",
+        "Name": "ROSHAN GURAGAIN",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT537",
+        "Name": "SABAL K.C.",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT538",
+        "Name": "SAMPANNA SHARMA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT539",
+        "Name": "SANDESH BHUSAL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT540",
+        "Name": "SANDESH PRASAD UPADHYAYA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT541",
+        "Name": "SHISHIR SUBEDI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT542",
+        "Name": "SHRAWAN KUMAR THAPA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT543",
+        "Name": "SOBIT NEUPANE",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT544",
+        "Name": "SUBASH TIWARI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT545",
+        "Name": "SUDEEP BHANDARI",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT546",
+        "Name": "SUJEET SILWAL",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT547",
+        "Name": "SUSHANT THAPA",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT548",
+        "Name": "URMILA MAHARJAN",
+        "Status": "P"
+      },
+      {
+        "Roll": "073BCT549",
+        "Name": "PUJAN KARK",
+        "Status": "P"
+      }
+    ]
+  }
