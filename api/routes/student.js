@@ -1,6 +1,7 @@
 let express = require('express');
 let db = require("../../config.js/dataconn");
 let router = express.Router();
+let { auth } = require('../../config.js/usercheck');
 
 router.get('/:rollNo', (req, res, next) => {
     const rollNo = req.params.rollNo;

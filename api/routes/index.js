@@ -2,12 +2,13 @@ let express = require('express');
 let db = require("../../config.js/dataconn");
 let router = express.Router();
 var passport =require('passport')
+let { auth } = require('../../config.js/usercheck');
 
 router.get('/', (req, res, next)=>{
     res.render('login');
 });
 
-router.get('/home', (req, res, next)=>{
+router.get('/home',auth,  (req, res, next)=>{
     res.render('home');
 });
 

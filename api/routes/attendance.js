@@ -1,5 +1,6 @@
 let express = require("express");
 let db = require("../../config.js/dataconn");
+let { auth } = require('../../config.js/usercheck');
 
 let router = express.Router();
 

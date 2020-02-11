@@ -1,7 +1,7 @@
 let express = require('express');
 let db = require("../../config.js/dataconn");
 let router = express.Router();
-
+let { auth } = require('../../config.js/usercheck');
 
 
 router.post('/', (req, res, next) => {
