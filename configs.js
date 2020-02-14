@@ -12,7 +12,7 @@ const database_config ={
     bigNumberStrings: true,
     host: 'localhost',
     user: 'root',
-    password: 'Funny@123',
+    password: 'Famous1234',
     database: databaseName,
     dateStrings:true
 

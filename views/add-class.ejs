@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<head>
+    <title>
+        Add Class
+    </title>
+</head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- change css source-->
+<link rel="stylesheet" href="/css/add-class.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<body>
+    <h1 class="acl-header">Add class</h1>
+    <div class="acl-container">
+        <form action="/add-class" method="POST">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="Batch">Batch</label>
+                <input type="text" class="form-control" id="Batch" placeholder="Eg. 074" name="batch">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="Department">Department</label>
+                <select id="Department" class="form-control" name="program">
+                  <option selected>BCT</option>
+                  <option>BEX</option>
+                  <option>BEL</option>
+                  <option>BCE</option>
+                  <option>BME</option>
+                  <option>BAR</option>
+                  <option>BAS</option>
+                  <option>BCH</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="Section">Section</label>
+                <select id="Section" class="form-control" name="section">
+                  <option selected>AB</option>
+                  <option>CD</option>
+                  <option>EF</option>
+                  <option>GH</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="Year">Year</label>
+                <select id="Year" class="form-control" name="year">
+                  <option selected>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="Part">Part</label>
+                <select id="Part" class="form-control" name="part">
+                  <option selected>1</option>
+                  <option>2</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success btn-lg btn-block">Next</button>
+            </div>
+        </div>
+        </form>
+    </div>
+
+</body>
