@@ -1,0 +1,38 @@
+.spl-header{
+    text-align: center;
+}
+.spl-container{
+    display:table;
+    margin:auto;
+    width: 80%;
+    padding-top:2em;
+}
+.spl-table-row{
+    display: table-row;
+    margin:3em;
+}
+#spl-link-add{
+    text-decoration: none;
+    margin:8em;
+}
+.spl-add-class{
+    text-align: center;
+    display:table-cell;
+}
+#spl-img-add-class{
+    height:300px;
+}
+#spl-link-view{
+    text-decoration: none;
+    margin:8em;
+}
+
+.spl-view-class{
+    text-align: center;
+    display:table-cell;
+    margin:2em;
+}
+
+#spl-img-view-class{
+    height:300px;
+}
