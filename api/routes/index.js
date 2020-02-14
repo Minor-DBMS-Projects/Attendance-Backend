@@ -172,12 +172,12 @@ var studentQuery="INSERT INTO student(roll_no,name,class_id) VALUES ?";
       if(err1) throw err1;
       db.query(instructorQuery,[result1[0].id,result1[0].name],(err2,result2)=>{
          if(err2) throw err2;
-         console.log(1);
-         db.query(classQuery,[student.batch],(err3,result3)=>{
-            console.log(2);
+         var classId=Math.random().toString(36).substring(7);
+         db.query(classQuery,[classId],(err3,result3)=>{
+            
             if(err3) throw err3;
             db.query(subjectQuery,[subject.code,request.body.subject.toString(),subject.year,subject.part],(err4,result4)=>{
-               console.log(3);
+
                if(err4) throw err4;
                var databaseEntry=false;
                var getStudent=(program,batch,group)=>{ 
@@ -205,7 +205,7 @@ var studentQuery="INSERT INTO student(roll_no,name,class_id) VALUES ?";
                       {
                          studentList[i][0]+=studentList[i][1]+studentList[i][2];
                          studentList[i].splice(1,2);
-                         studentList[i].push(student.batch);
+                         studentList[i].push(classId);
                       }
                       console.log(studentList);
                       db.query(studentQuery,[studentList],(err5,result5)=>{
