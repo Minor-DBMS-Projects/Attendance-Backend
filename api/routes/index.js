@@ -3,6 +3,7 @@ let db = require("../../config.js/dataconn");
 let router = express.Router();
 var passport =require('passport')
 let { auth } = require('../../config.js/usercheck');
+let { admin } = require('../../config.js/usercheck');
 
 router.get('/', (req, res, next)=>{
     res.render('login');
@@ -13,48 +14,10 @@ router.get('/home',auth,  (req, res, next)=>{
 });
 
 
-
-router.post('/', (req, res, next) => {
-    const oldPassword = req.body.old;
-    const newPassword = req.body.new;
- 
-    let sql = `SELECT value from authentication`;
-    db.query(sql)
-       .then((row) => {
-          if (row.length === 0) {
- 
-             if (oldPassword === '') {
-                sql = `INSERT INTO authentication (value) VALUES("${newPassword}")`
-                console.log('Here');
-                db.query(sql)
-                .then(()=>{
-                   res.status(200).json({
-                      msg:'Successfully Updated'
-                   })
-                })
-                .catch(next)
-             }
-          }
-          else {
-             let passwordInDB = row[0].value;
-             if (passwordInDB === oldPassword) {
-                sql = `UPDATE authentication SET value="${newPassword}"`;
-                db.query(sql)
-                .then(()=>{
-                   res.status(200).json({
-                      msg:'Successfully Updated'
-                   })
-                })
-                .catch(next);
-             }else{
-                res.status(200).json({
-                   msg:'Incorrect old password'
-                })
-             }
-          }
-       })
- });
-
+router.get('/logout', function(req, res, next)
+{req.logOut()
+res.redirect('/');
+})
 
 router.post('/login',function(request, response, next) 
 {
@@ -65,7 +28,7 @@ router.post('/login',function(request, response, next)
     console.log(err+ "   inauth err")
     
             if(!user){ console.log("no user");
-            response.redirect('back')
+            
               }
             else{
                 

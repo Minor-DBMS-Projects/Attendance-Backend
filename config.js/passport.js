@@ -2,17 +2,17 @@ const LocalStrategy = require ('passport-local').Strategy;
 const db = require('./dataconn');
 const bcrypt = require ('bcryptjs');
 
+const localOptions = { usernameField: 'code', passwordField: 'password' };
 module.exports = function(passport)
-{ 
-	
-	passport.use(new LocalStrategy(function(username, password, done)
+{
+	passport.use(new LocalStrategy(localOptions, function(code, password, done)
 	
 	{   
-		db.query(`SELECT * FROM user Where username = '${username}' limit 1` , function(err, row){
+		db.query("select * from user where code = ? limit 1", [code], function(err, row){
 		 if(err) 
 		console.log(err); 
 		
-		if(!row||(row.length==0)){ return done(null, false, ('message','Invalid username or password.')); }
+		if(!row){ return done(null, false, ('message','Invalid username or password.')); }
 		
 		
 
@@ -20,10 +20,11 @@ module.exports = function(passport)
 		bcrypt.compare(password.toString(), row[0].password.toString(), function(err, isMatch)
 			{
 
+
 				if (err) console.log(err);
 				if(isMatch)
 				{
-
+console.log("checking.....")
 
 					return done(null, row[0]);
 
@@ -33,10 +34,10 @@ module.exports = function(passport)
 					return done(null, false, {message:'Wrong password'});
 				}
 			})
-			
+        
       });
 		
-
+		
 		
 	}))
 

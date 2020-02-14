@@ -2,6 +2,7 @@ let express = require('express');
 let db = require("../../config.js/dataconn");
 let router = express.Router();
 let { auth } = require('../../config.js/usercheck');
+let { admin } = require('../../config.js/usercheck');
 
 router.get('/:classId', (req, res, next) => {
     const { classId } = req.params;

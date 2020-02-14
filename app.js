@@ -5,6 +5,7 @@ const passport= require('passport');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const path = require('path');
+let db = require("./config.js/dataconn");
 
 const app = express();
 
@@ -73,7 +74,7 @@ app.use(bodyParser.json());
 
 
 //Forward routes
-app.use('/admin', adminRoute);
+app.use('/secret', adminRoute);
 app.use('/student', studentRoute);
 app.use('/class', classRoute);
 app.use('/attendance', attendanceRoute);
@@ -81,6 +82,20 @@ app.use('/subject', subjectRoute);
 app.use('/instructor', instructorRoute);
 app.use('/password', passwordRoute);
 app.use('/', indexRoute);
+
+
+app.get('*', function(req, res,next)
+{
+  user=req.user||null
+
+  db.query("select * from user where id = ? limit 1", [user],function (err, result) {
+    if (err) throw err;
+    
+    res.userdata = result[0]
+
+    next()
+  });
+})
 
 
 //Forward request to error handler

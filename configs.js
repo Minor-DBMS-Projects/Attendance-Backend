@@ -3,7 +3,7 @@ var mysql = require('mysql')
 
 const express_config = {
     //port:process.env.PORT || 3000
-    port:process.env.PORT || 3000
+    port:process.env.PORT || 3002
 };
 
 const databaseName = 'schema_attendance';

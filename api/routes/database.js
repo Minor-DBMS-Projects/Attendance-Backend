@@ -46,7 +46,7 @@ class Database {
                 return this.query(sql);
             })
             .then(() => {
-                sql = 'CREATE TABLE IF NOT EXISTS user (id INT primary key NOT NULL AUTO_INCREMENT, username varchar(255), email varchar(255), password varchar(255))';
+                sql = 'CREATE TABLE IF NOT EXISTS user (id INT primary key NOT NULL AUTO_INCREMENT, username varchar(255), code varchar(255), password varchar(255), type varchar(255))';
                 return this.query(sql);
             })
 
