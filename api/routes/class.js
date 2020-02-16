@@ -15,6 +15,8 @@ router.get('/', (req, res, next)=>{
    })
    .catch(next);
 });
+
+
 router.get('/students/:classId', (req, res, next)=>{
     const classId = req.params.classId;
     let sql = `SELECT roll_no as rollno, name from student join (SELECT id from class where id = "${classId}") as c on class_id = id;`;

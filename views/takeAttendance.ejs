@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+    <title>
+       Take Attendance
+    </title>
+</head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- change css source-->
+<link rel="stylesheet" href="/css/add-class.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<body>
+    <h1 class="acl-header">Select class and subject </h1>
+    <form action="/student/namelist" method="POST">
+            <div class="form-group col-md-6">
+                
+                <select id="Class" class="form-control" name="classid">
+                    <% classes.forEach(function(Class){ %>
+
+                  <option><%=Class.class%></option>
+                  
+                  <% }) %>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <select id="Subject" class="form-control" name="subjectcode">
+                    <% subjects.forEach(function(Subject){ %>
+
+
+                        <option><%=Subject.code%><p>(<%=Subject.name%>/<%=Subject.year%> /<%=Subject.part%>)</p> </option>
+                        
+                        <% }) %>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-success btn-lg btn-block">Next</button>
+            </div>
+        </div>
+        </form>
+    </div>
+
+</body>

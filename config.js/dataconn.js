@@ -4,7 +4,7 @@ var mysql        = require('mysql');
       bigNumberStrings: true,
       host     : "localhost",
       user     : "root",
-      password : "Famous1234",
+      password : "Funny@123",
       database : "schema_attendance"
     });
 

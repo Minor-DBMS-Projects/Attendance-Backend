@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+<style>
+table, th, td {
+  border: 1px solid rgb(78, 18, 146);
+
+}
+</style>
+</head>
+<body>
+    <form name="theForm" action= "/attendance/submit" method="post">
+      <input type="hidden" value="<%=students[0].class_id%>" name = "class_id" > 
+      <input type="hidden" value="<%=subject[0].code%>" name = "subject_code" > 
+      <input type="hidden" value="<%=subject[0].year%>" name = "subject_year" > 
+      <input type="hidden" value="<%=subject[0].part%>" name = "subject_part" > 
+      <input type="hidden" value="<%=subject[0].name%>" name = "subject_name" > 
+     
+<table id = "tableu">
+  <col width="150">
+  <col width="200">
+  <col width="80">
+  <tr>
+    <th>Roll_no</th>
+    <th>Name</th>
+    <th>Status</th>
+  </tr>
+  <% students.forEach(function(Student){ %>
+  <tr>
+    <td><%=Student.roll_no%></td>
+    <td><%=Student.name%></td>
+    
+    <td>
+      
+        <input type="checkbox" id="<%=Student.roll_no%>" name="<%=Student.roll_no%>" value= "P" onclick= "changeStatus(this.id)" checked > 
+    </td>
+  </tr>
+  <% }) %> 
+</table>
+
+<button type="submit" >Submit</button>
+</form>
+
+
+</body>
+
+<script>
+function changeStatus(id)
+{
+if (document.getElementById(id).checked==true)
+{document.getElementById(id).value="P"
+
+
+}
+else if (document.getElementById(id).checked==fasle)
+{document.getElementById(id).value="A"
+
+}
+
+
+
+}
+
+</script>
+
+
+
+
+</html>

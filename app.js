@@ -91,7 +91,7 @@ app.get('*', function(req, res,next)
   db.query("select * from user where id = ? limit 1", [user],function (err, result) {
     if (err) throw err;
     
-    res.userdata = result[0]
+    userdata = result[0]
 
     next()
   });

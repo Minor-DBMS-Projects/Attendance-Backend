@@ -5,6 +5,29 @@ let { admin } = require('../../config.js/usercheck');
 
 let router = express.Router();
 
+router.get('/take',auth, async (req, res, next)=>{
+  let q1 = `SELECT id as class from class ;`
+  let q2 = `SELECT year as year, part as part, code as code, name as subject from subject;`
+  db.query(q1 , (err , classes)=>{
+    if(err)
+      console.log("could not get classes")
+    else
+  {db.query(q2 , (err , subjects)=>{
+      if(err)
+        console.log("could not get subjects")
+      else
+        console.log("Data fetched successfully")
+        console.log(classes)
+        console.log(subjects)
+        res.render('takeAttendance', {'classes':classes,'subjects':subjects });
+    })
+  }})
+ 
+});
+
+
+
+
 function insertSubject(code, name, year, part) {
   let q1 = `INSERT IGNORE INTO subject (code, name, year, part) VALUES ("${code}", "${name}", "${year}", "${part}")`;
   return q1;
@@ -29,13 +52,27 @@ function insertClass(class_id) {
 }
 
 function insertAttendance(body, students) {
-  let q1 = `INSERT INTO attendance (student_id, subject_code, class_id, attendance_date, instructor_id, present) VALUES `;
+  let q1 = `INSERT IGNORE INTO attendance (student_id, subject_code, class_id, attendance_date, instructor_id, present) VALUES `;
   let q2 = students.reduce((accumulator, currentValue) => {
     return (
       accumulator +
       `("${currentValue.Roll}", "${body.SubjectId}", "${body.Class}", "${
       body.Date
       }", "${body.InstructorId}", "${currentValue.Status}"),`
+    );
+  }, "");
+  return q1 + q2.slice(0, -1);
+}
+
+
+function insertAttendanceweb(body, students, code) {
+  let q1 = `INSERT INTO attendance (student_id, subject_code, class_id, attendance_date, instructor_id, present) VALUES `;
+  let q2 = students.reduce((accumulator, currentValue) => {
+    return (
+      accumulator +
+      `("${currentValue.roll_no}", "${body.subject_code}", "${body.class_id}", "${
+         (new Date()).toISOString().slice(0, 10).replace('T', ' ')
+      }", "${code}", "${currentValue.Status}"),`
     );
   }, "");
   return q1 + q2.slice(0, -1);
@@ -53,12 +90,15 @@ router.get("/getRecent/:numData", (req, res, next) => {
        ( SELECT DISTINCT class_id, instructor_id, subject_code, attendance_date as date from attendance) as a 
             join instructor on a.instructor_id = id 
             join subject on a.subject_code = code order by date desc limit ${numData}`;
-  db.query(q1)
-    .then(row => {
-      res.status(200).json(row);
-    })
-    .catch(next);
+            db.query(q1,(err,result)=>{
+            
+              if(err) throw err;
+              else  console.log(result)
+         
+          })
 });
+
+
 
 router.get("/getAttendance/:classId/:subjectId/:date/", (req, res, next) => {
   const { subjectId, classId, date } = req.params;
@@ -164,5 +204,66 @@ router.post("/", (req, res, next) => {
     })
     .catch(next);
 });
+
+
+
+
+router.post("/submit",(req, res, next) => {
+  body= req.body
+  var students=[]
+  let sql = `SELECT * from student where class_id = ?;`;
+    db.query(sql,[body.class_id],(err,student)=>{
+          var status;  
+        if(err) throw err;
+        else { 
+student.forEach(element => {
+ element.Status= "P"
+
+
+  if(!body[`${element.roll_no}`])
+  {
+    element.Status = "A"
+  }
+
+
+
+
+
+  
+});
+ }
+
+students= student
+})
+    
+    
+
+    
+
+try{
+  db.query('SELECT * FROM user WHERE id = (?)',[req.user],async (err,result)=>{
+    if(err)
+    console.log(err)
+else{
+  await db.query(insertInstructor(result[0].code,result[0].username))
+   
+  await db.query(insertSubject(body.subject_code, body.subject_name, body.subject_year, body.subject_part));
+    
+
+  await db.query(insertClass(body.class_id));
+
+ await db.query(insertAttendanceweb(body, students,result[0].code ));
+}
+
+    })
+  }
+catch(err)
+{
+  console.log(err)
+}
+
+
+}     
+);
 
 module.exports = router;
