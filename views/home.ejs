@@ -1,32 +1,65 @@
 
 <!DOCTYPE html>
+<html>
 <head>
-    <title>
-        Classroom Attendance
-    </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 250px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color:#69d2e7;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 6px 6px 32px;
+  text-decoration: none;
+  font-size: 15px;
+  color: #000000;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.main {
+  margin-left: 400px; /* Same as the width of the sidenav */
+  text-align:center
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
 </head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<!-- change css source-->
-<link rel="stylesheet" href="/css/home.css" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <body>
-    <h1 class="spl-header">Classroom Attendance</h1>
-    <div class="spl-container">
-        <div class="spl-table-row">
-            <a href="/add-class" id="spl-link-add">
-                <div class="spl-add-class">
-                    <h3>Add new class</h3><br>
-                    <img src="/images/blackboard.svg" id="spl-img-add-class" />
-                </div>
-            </a>
-            <a href="/attendance/take" id="spl-link-view">
-                <div class="spl-view-class">
-                    <h3>Take Attendance</h3><br>
-                    <img src="/images/display.svg" id="spl-img-view-class" />
-                </div>
-            </a>
-        </div>
-    </div>
+    
+
+<div class="sidenav">
+    <br>
+  <a href="/logout">Logout</a>
+  <a href="/add-class">Add Class</a>
+  <a href="/attendance/take">Take Attendance</a>
+  <a href="/attendance">View My Classes</a>
+</div>
+
+<div class="main">
+  <h2>Pulchowk Campus Class Attendance</h2>
+
+ 
+  <p>Teacher's Dashboard</p>
+</div>
+   
 </body>
+</html> 

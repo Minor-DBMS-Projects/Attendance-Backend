@@ -253,6 +253,7 @@ else{
   await db.query(insertClass(body.class_id));
 
  await db.query(insertAttendanceweb(body, students,result[0].code ));
+ res.redirect('/')
 }
 
     })
@@ -260,6 +261,7 @@ else{
 catch(err)
 {
   console.log(err)
+  res.redirect('back')
 }
 
 

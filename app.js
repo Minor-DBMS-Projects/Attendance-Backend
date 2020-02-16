@@ -87,14 +87,17 @@ app.use('/', indexRoute);
 app.get('*', function(req, res,next)
 {
   user=req.user||null
+  
 
   db.query("select * from user where id = ? limit 1", [user],function (err, result) {
     if (err) throw err;
     
-    userdata = result[0]
+   userdata = result[0]
+   console.log(user)
 
     next()
   });
+  
 })
 
 
