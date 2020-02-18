@@ -13,6 +13,7 @@ table, th, td {
 </head>
 <body>
     <form name="theForm" action= "/attendance/submit" method="post">
+      <input type="hidden" value="<%=userdata.code%>" name = "instructor" > 
       <input type="hidden" value="<%=students[0].class_id%>" name = "class_id" > 
       <input type="hidden" value="<%=subject[0].code%>" name = "subject_code" > 
       <input type="hidden" value="<%=subject[0].year%>" name = "subject_year" > 

@@ -66,6 +66,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 
+app.get('*', function(req, res,next)
+{
+  user=req.user||null
+  
+
+  db.query("select * from user where id = ? limit 1", [user],function (err, result) {
+    if (err) throw err;
+    
+   userdata = result[0]
+  
+    next()
+  });
+  
+})
 
 
 
@@ -84,29 +98,9 @@ app.use('/password', passwordRoute);
 app.use('/', indexRoute);
 
 
-app.get('*', function(req, res,next)
-{
-  user=req.user||null
-  
-
-  db.query("select * from user where id = ? limit 1", [user],function (err, result) {
-    if (err) throw err;
-    
-   userdata = result[0]
-   console.log(user)
-
-    next()
-  });
-  
-})
 
 
-//Forward request to error handler
-app.use((req, res, next)=>{
-    const error = new Error('Not Found');
-    error.status = 404;
-    next(error);
-});
+
 
 //Handling Error for all types
 app.use((err, req, res, next)=>{

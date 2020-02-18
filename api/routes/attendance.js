@@ -5,6 +5,7 @@ let { admin } = require('../../config.js/usercheck');
 
 let router = express.Router();
 
+//route to taking attendance from saved classes and subjects page
 router.get('/take',auth, async (req, res, next)=>{
   let q1 = `SELECT id as class from class ;`
   let q2 = `SELECT year as year, part as part, code as code, name as subject from subject;`
@@ -17,8 +18,6 @@ router.get('/take',auth, async (req, res, next)=>{
         console.log("could not get subjects")
       else
         console.log("Data fetched successfully")
-        console.log(classes)
-        console.log(subjects)
         res.render('takeAttendance', {'classes':classes,'subjects':subjects });
     })
   }})
@@ -71,14 +70,14 @@ function insertAttendanceweb(body, students, code) {
     return (
       accumulator +
       `("${currentValue.roll_no}", "${body.subject_code}", "${body.class_id}", "${
-         (new Date()).toISOString().slice(0, 10).replace('T', ' ')
+         new Date().toISOString().slice(0, 10).replace('T', ' ')
       }", "${code}", "${currentValue.Status}"),`
     );
   }, "");
   return q1 + q2.slice(0, -1);
 }
-
-router.get("/getRecent/:numData", (req, res, next) => {
+//get recent  attendance data saved for admin site viewing
+router.get("/getRecent/:numData",admin,  (req, res, next) => {
   const numData = req.params.numData;
   let q1 = `SELECT class_id as class,
             year,part,
@@ -98,26 +97,58 @@ router.get("/getRecent/:numData", (req, res, next) => {
           })
 });
 
+//instructor can fetch recent of attendance data
+router.get("/getRecent/:numData/:_id",auth,  (req, res, next) => {
+  const numData = req.params.numData;
+  const  _id= req.params._id;
+  let q1 = `SELECT class_id as class,
+            year,part,
+        date,
+        instructor.name as instructor,
+        subject.name as subject,
+        subject.code as subjectCode
+        from
+       ( SELECT DISTINCT class_id, instructor_id, subject_code, attendance_date as date from attendance) as a 
+            join instructor on a.instructor_id =id
+            join subject on a.subject_code = code where instructor.id="${_id}" order by date desc limit ${numData}`
+            
+            db.query(q1,(err,result)=>{
+            
+              if(err) throw err;
 
-
-router.get("/getAttendance/:classId/:subjectId/:date/", (req, res, next) => {
-  const { subjectId, classId, date } = req.params;
-  const q1 = `SELECT rollNo, name, status from (SELECT student_id as rollNo, present as status from attendance where
-                    class_id ='${classId}' and
-                    subject_code='${subjectId}' and
-                    attendance_date ='${date}')
-                    as a join student where rollNo = student.roll_no order by rollNo`;
-
-  db.query(q1)
-    .then(row => {
-      res.status(200).json(row);
-    })
-    .catch(next);
+              else {console.log(result)
+                res.render('home.ejs', {'data':result})
+              }
+         
+          })
 });
 
-//@Todo Handling instructor with same instructorId and subjectCode
+
+//get attendance of a class of a subject by date
+
+router.get("/:subjectCode/:name", (req, res, next) => {
+  const  subjectCode = req.params.subjectCode;
+  const  instructor  = req.params.name;
+  const sql = `SELECT attendance_date as "Attendance Date", COUNT(CASE WHEN present='P' then 1 ELSE NULL END) as "Present Student" 
+                 from attendance where subject_code = "ME601"
+                 and instructor_id = (SELECT id from instructor where name ="${Manita}") group by attendance_date`;
+  db.query(sql,(rows) => {
+
+      res.status(200).json(rows);
+      console.log(rows);
+    
+    })
+   
+});
+
+
+
+
+//instructors report of a subject of a class
 router.get("/all/:classId/:subjectCode/:instructor", (req, res, next) => {
-  const { classId, subjectCode, instructor } = req.params;
+  const classId=req.params.classId;
+  const subjectCode= req.params.subjectCode;
+  const instructor  = req.params.instructor;
   const sql = `SELECT rollNo, name, date, status, present 
                  from (SELECT student_id as rollNo,
                  GROUP_CONCAT(attendance_date order by attendance_date) as date,
@@ -129,42 +160,31 @@ router.get("/all/:classId/:subjectCode/:instructor", (req, res, next) => {
                  instructor_id = (SELECT id from instructor where name="${instructor}") 
                  group by student_id) as s
                  left join student on s.rollNo = roll_no`;
-  db.query(sql)
-    .then(rows => {
-      res.status(200).json(rows);
-      return rows;
-    })
-    .catch(next);
-});
 
+                 db.query(sql,(err,result)=>{
+            
+                  if(err) throw err;
+                  else  console.log(result)
+             
+              })
+
+});
+//attendance of a class by subject and date
 
 router.get("/getAttendance/:classId/:subjectId/:date/", (req, res, next) => {
-  const { subjectId, classId, date } = req.params;
+  const subjectId = req.params.subjectId;
+  const classId = req.params.classId;
+  const date = req.params.date;
   const q1 = `SELECT rollNo, name, status from (SELECT student_id as rollNo, present as status from attendance where
                     class_id ='${classId}' and
                     subject_code='${subjectId}' and
                     attendance_date ='${date}')
                     as a join student where rollNo = student.roll_no order by rollNo`;
 
-  db.query(q1)
-    .then(row => {
-      res.status(200).json(row);
-    })
-    .catch(next);
+                    
 });
 
-router.get("/:subjectCode/:instructor", (req, res, next) => {
-  const { subjectCode, instructor } = req.params;
-  const sql = `SELECT attendance_date as "Attendance Date", COUNT(CASE WHEN present='P' then 1 END) as "Present Student", COUNT(attendance_date) as "Total Student" 
-                 from attendance where subject_code = "${subjectCode}"
-                 and instructor_id = (SELECT id from instructor where name ="${instructor}") group by attendance_date`;
-  db.query(sql)
-    .then(rows => {
-      res.status(200).json(rows);
-      return rows;
-    })
-    .catch(next);
-});
+
 
 router.post("/", (req, res, next) => {
   let body = req.body;

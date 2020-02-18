@@ -20,12 +20,11 @@ var subject={
 }
 var subjectList;
 router.get('/',auth, (req, res, next)=>{
-    res.redirect('home');
-});
+  
+   
+   res.redirect('/attendance/getRecent/30/'+userdata.code)
 
-
-router.get('/home',auth,(req, res, next)=>{
-    res.render('home');
+    
 });
 
 
@@ -56,7 +55,7 @@ router.post('/login',function(request, response, next)
                 request.login(user, function(error) {
                     if (error) return next(error);
                     
-                    response.redirect('/home')
+                    response.redirect('/')
                    
                 });
   }

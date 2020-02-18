@@ -44,14 +44,15 @@ body {
 </style>
 </head>
 <body>
-    
+ 
+  <input type="hidden" value="<%=userdata.code%>" name = "instructor" >    
 
 <div class="sidenav">
     <br>
   <a href="/logout">Logout</a>
   <a href="/add-class">Add Class</a>
   <a href="/attendance/take">Take Attendance</a>
-  <a href="/attendance">View My Classes</a>
+  
 </div>
 
 <div class="main">
@@ -59,7 +60,19 @@ body {
 
  
   <p>Teacher's Dashboard</p>
+
+  <h2>My Recent Classes</h2>
+
+
+  <% data.forEach(function(attendance){ %>
+    <button><a ><%=attendance.class%>_<%=attendance.subject%>_<%=attendance.date%></a></button><br>
+
+    
+    <% }) %>
+
+
 </div>
+
    
 </body>
 </html> 
