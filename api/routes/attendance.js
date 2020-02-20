@@ -84,7 +84,8 @@ router.get("/getRecent/:numData",admin,  (req, res, next) => {
         date,
         instructor.name as instructor,
         subject.name as subject,
-        subject.code as subjectCode
+        subject.code as subjectCode,
+       
         from
        ( SELECT DISTINCT class_id, instructor_id, subject_code, attendance_date as date from attendance) as a 
             join instructor on a.instructor_id = id 
@@ -92,7 +93,7 @@ router.get("/getRecent/:numData",admin,  (req, res, next) => {
             db.query(q1,(err,result)=>{
             
               if(err) throw err;
-              else  console.log(result)
+             
          
           })
 });
@@ -103,20 +104,24 @@ router.get("/getRecent/:numData/:_id",auth,  (req, res, next) => {
   const  _id= req.params._id;
   let q1 = `SELECT class_id as class,
             year,part,
-        date,
+        
+
         instructor.name as instructor,
+        
         subject.name as subject,
         subject.code as subjectCode
+        
         from
-       ( SELECT DISTINCT class_id, instructor_id, subject_code, attendance_date as date from attendance) as a 
+       ( SELECT DISTINCT class_id, instructor_id, subject_code from attendance ) as a 
             join instructor on a.instructor_id =id
-            join subject on a.subject_code = code where instructor.id="${_id}" order by date desc limit ${numData}`
+            join subject on a.subject_code = code where instructor.id="${_id}" limit ${numData}`
             
             db.query(q1,(err,result)=>{
             
               if(err) throw err;
 
-              else {console.log(result)
+              else {
+                console.log(result)
                 res.render('home.ejs', {'data':result})
               }
          
@@ -130,8 +135,8 @@ router.get("/:subjectCode/:name", (req, res, next) => {
   const  subjectCode = req.params.subjectCode;
   const  instructor  = req.params.name;
   const sql = `SELECT attendance_date as "Attendance Date", COUNT(CASE WHEN present='P' then 1 ELSE NULL END) as "Present Student" 
-                 from attendance where subject_code = "ME601"
-                 and instructor_id = (SELECT id from instructor where name ="${Manita}") group by attendance_date`;
+                 from attendance where subject_code = "${subjectCode}"
+                 and instructor_id = (SELECT id from instructor where name ="${instructor}") group by attendance_date`;
   db.query(sql,(rows) => {
 
       res.status(200).json(rows);
@@ -157,14 +162,16 @@ router.get("/all/:classId/:subjectCode/:instructor", (req, res, next) => {
                  from attendance where
                  class_id = "${classId}" and
                  subject_code ="${subjectCode}" and
-                 instructor_id = (SELECT id from instructor where name="${instructor}") 
+                 instructor_id = "${instructor}"
                  group by student_id) as s
                  left join student on s.rollNo = roll_no`;
 
                  db.query(sql,(err,result)=>{
             
                   if(err) throw err;
-                  else  console.log(result)
+                  else  {console.log((result))
+                    res.render('record', {'records':result})
+                  }
              
               })
 

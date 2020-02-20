@@ -184,7 +184,7 @@ router.post('/next',auth,(request,response,next)=>{
                          db.query(studentQuery,[studentList],(err5,result5)=>{
                             if(err5) throw err5;
                             if(databaseEntry){
-                               response.redirect('/home');
+                               response.redirect('/');
                             }
                             databaseEntry=true;
                          });

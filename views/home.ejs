@@ -41,6 +41,25 @@ body {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
 }
+
+
+
+
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  width: 40%;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.container {
+  padding: 2px 16px;
+}
+
 </style>
 </head>
 <body>
@@ -49,6 +68,7 @@ body {
 
 <div class="sidenav">
     <br>
+          
   <a href="/logout">Logout</a>
   <a href="/add-class">Add Class</a>
   <a href="/attendance/take">Take Attendance</a>
@@ -56,23 +76,50 @@ body {
 </div>
 
 <div class="main">
-  <h2>Pulchowk Campus Class Attendance</h2>
+  <h1>Pulchowk Campus Class Attendance</h1>
 
  
-  <p>Teacher's Dashboard</p>
+  <h2> Teacher's Dashboard</h2>
 
-  <h2>My Recent Classes</h2>
+  <h2>  <%=userdata.username%>'s Recent Classes</h2>
 
 
   <% data.forEach(function(attendance){ %>
-    <button><a ><%=attendance.class%>_<%=attendance.subject%>_<%=attendance.date%></a></button><br>
+
+    <form action="/student/namelist" method="POST">
+    <div class="card" id ="<%=attendance.class%>_<%=attendance.subject%>_<%=attendance.date%>" style = "display: none;position:absolute;background-color:#69d2e7;">
+      <div class="container">
+        <h4><b><input type = "hidden" name= "classid" value ="<%=attendance.class%>">   <p><%=attendance.subject%></p> </b></h4> 
+       <input type="hidden" value= "<%=attendance.subjectCode%>" name ="subjectcode" >
+        <p><%=attendance.class%></p>  
+        <h><%=attendance.date%></h>
+        <p>Instructor: <%=attendance.instructor%> </p></p> Year: <%=attendance.year%> Part <%=attendance.part%></p> 
+        <button type="submit">Take Attendance</button>
+        <button><a href = "/attendance/all/<%=attendance.class%>/<%=attendance.subjectCode%>/<%=userdata.code%>">View Attendance History</a></button>
+        
+      
+      </form>  
+        
+      </div>
+    </div>
+
+
+    <button name="<%=attendance.class%>_<%=attendance.subject%>_<%=attendance.date%>"  onclick="openForm(this.name)" ><%=attendance.class%>_<%=attendance.subject%>_<%=attendance.date%></button><br>
 
     
     <% }) %>
 
 
-</div>
 
    
 </body>
+<script>
+  function openForm(id) {
+    if(document.getElementById(id).style.display =="none")
+    document.getElementById(id).style.display = "block";
+
+  else 
+    document.getElementById(id).style.display = "none";
+  }
+  </script>
 </html> 

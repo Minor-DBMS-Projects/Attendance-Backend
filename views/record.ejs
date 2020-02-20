@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+<style>
+table, th, td {
+  border: 1px solid rgb(78, 18, 146);
+
+}
+</style>
+</head>
+<body>
+    
+     
+<table id = "tableu">
+  <col width="150">
+  <col width="200">
+  <col width="100">
+  <tr>
+    <th>Roll_no</th>
+    <th>Name</th>
+    <th>Status</th>
+    <th>Total</th>
+  </tr>
+
+
+  <% records.forEach(function(record){ %>
+    <tr>
+      <td><%=record.rollNo%></td>
+      <td><%=record.name%></td>
+      <td><%=record.status%></td>
+      <td><%=record.present%></td>
+      
+    
+    </tr>
+    <% }) %> 
+
+ 
+</table>
+
+
+
+
+</body>
+
+<script>
+
+
+</script>
+
+
+
+
+</html>

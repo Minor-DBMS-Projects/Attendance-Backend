@@ -28,11 +28,12 @@ router.post('/namelist', (req, res, next)=>{
     
     let sql = `SELECT * from student where class_id = ?;`;
     db.query(sql,[req.body.classid],(err,result1)=>{
+        
             
         if(err) throw err;
         else { 
             
-
+            
 
             
 
@@ -41,7 +42,8 @@ router.post('/namelist', (req, res, next)=>{
         
         if(err) throw err;
         else { 
-            console.log(result2)
+            console.log(req.body.subjectcode)
+            
             res.render('namelist', {'students':result1,'subject':result2})
     }
 
