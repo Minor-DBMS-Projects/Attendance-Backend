@@ -6,13 +6,16 @@
 </head>
 <body>
     <div class="wrap">
-        <form class="login-form" action="secret/login", method="post">
+        <form class="login-form" action="../secret/add-user", method="post">
             <div class="form-header">
-                <h3>Admin Login Form</h3>
-                <p>Login to access Admin dashboard</p>
+                <h3>New User</h3>
+                
             </div>
-            
-            <!--admincode Input-->
+            <!--Name Input-->
+            <div class="form-group">
+                <input type="text" class="form-input" placeholder="name" name="username">
+            </div>
+            <!--Email Input-->
             <div class="form-group">
                 <input type="text" class="form-input" placeholder="code" name="code">
             </div>
@@ -20,9 +23,16 @@
             <div class="form-group">
                 <input type="password" class="form-input" placeholder="password" name="password">
             </div>
-            <!--Login Button-->
             <div class="form-group">
-                <button class="form-button" type="submit">Login</button>
+                <input type="text" class="form-input" placeholder="dept" name="dept">
             </div>
+
+            <!--Add Button-->
+            <div class="form-group">
+                <button class="form-button" type="submit">Add</button>
+            </div>
+           
+        </form>
+    </div><!--/.wrap-->
 </body>
 </html>

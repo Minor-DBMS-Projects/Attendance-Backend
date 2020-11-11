@@ -8,7 +8,7 @@ module.exports = function(passport)
 	passport.use(new LocalStrategy(localOptions, function(code, password, done)
 	
 	{   
-		db.query("select * from user where code = ? limit 1", [code], function(err, row){
+		db.query("select * from instructor where code = ? limit 1", [code], function(err, row){
 		 if(err) 
 		console.log(err); 
 		

@@ -4,7 +4,7 @@ let router = express.Router();
 let { auth } = require('../../config.js/usercheck');
 let { admin } = require('../../config.js/usercheck');
 
-router.get('/:rollNo', (req, res, next) => {
+router.get('/:rollNo', (req, res, err) => {
     const rollNo = req.params.rollNo;
     let sql = ` SELECT subject.name as subject, instructor.name as instructor, year, part, present, totalDay from 
                 (SELECT subject_code, instructor_id, COUNT(present) as totalDay,
@@ -19,41 +19,45 @@ router.get('/:rollNo', (req, res, next) => {
                 row
             );
 
-        }).catch(next);
+        }).catch(err);
 });
 
 
+router.post('/namelist', auth, (req, res, next)=>
+{
+  batch=req.body.batch.toString();
+  classId=parseInt(req.body.classid);
+  program= req.body.program.toString();
+  section= req.body.section.toString();
+  subjectCode=req.body.subjectcode.toString();
+  subject=req.body.subject.toString();
+  classType=req.body.type.toString();
+  
+  var subject={code:subjectCode, subject:subject};
+  var classDetails={class:batch+program, id:classId, classType:classType, class_group:section}
 
-router.post('/namelist', (req, res, next)=>{
+ 
+
+
+  
+    let q3= `select* from student JOIN class on student.class_id=class.id where class.id =${classId};`
+    db.query(q3, (err, students)=>
+    {
+      if (err)
+      console.log("could not get students")
+      else
+      {
+  
+     
+      res.render('namelist', {'classes':[classDetails], 'subjects':[subject], 'students':students});
+      }
+    })
     
-    let sql = `SELECT * from student where class_id = ?;`;
-    db.query(sql,[req.body.classid],(err,result1)=>{
-        
-            
-        if(err) throw err;
-        else { 
-            
-            
+ 
+    
+ 
 
-            
-
-    let sq2 = `SELECT * from subject where code = ?;`;
-    db.query(sq2,[(req.body.subjectcode).substring(0,5)],(err,result2)=>{
-        
-        if(err) throw err;
-        else { 
-            console.log(req.body.subjectcode)
-            
-            res.render('namelist', {'students':result1,'subject':result2})
-    }
-
-   
-    })
-           
-    }
-
-   
-    })
 });
+
 
 module.exports = router;

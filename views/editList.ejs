@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+<style>
+table, th, td {
+  border: 1px solid rgb(78, 18, 146);
+
+}
+</style>
+</head>
+<body>
+    <form name="theForm" action= "/attendance/edit/<%=id%>" method="post">
+    
+
+<table id = "tableu">
+  <col width="150">
+  <col width="200">
+  <col width="80">
+  <tr>
+    <th>Roll_no</th>
+    <th>Name</th>
+    <th>Status</th>
+  </tr>
+  <% students.forEach(function(Student){ %>
+  <tr>
+    <td><%=Student.roll_no%></td>
+    <td><%=Student.name%></td>
+    
+    <td>
+      
+        <input type="checkbox" id="<%=Student.roll_no%>" name="<%=Student.roll_no%>"  onclick= "changeStatus(this.id)" <%if (present.includes(Student.roll_no)){%>checked<%} %>> 
+    </td>
+  </tr>
+  <% }) %> 
+</table>
+</br>
+<button type="submit" >Submit</button>
+</form>
+
+
+</body>
+
+<script>
+function changeStatus(id)
+{
+if (document.getElementById(id).checked==true)
+{document.getElementById(id).value="present"
+
+
+}
+else if (document.getElementById(id).checked==false)
+{document.getElementById(id).value="absent"
+
+}
+
+
+
+}
+
+</script>
+
+
+
+
+</html>

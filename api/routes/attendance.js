@@ -1,177 +1,333 @@
 let express = require("express");
 let db = require("../../config.js/dataconn");
 let { auth } = require('../../config.js/usercheck');
-let { admin } = require('../../config.js/usercheck');
 
 let router = express.Router();
 
-//route to taking attendance from saved classes and subjects page
-router.get('/take',auth, async (req, res, next)=>{
-  let q1 = `SELECT id as class from class ;`
-  let q2 = `SELECT year as year, part as part, code as code, name as subject from subject;`
-  db.query(q1 , (err , classes)=>{
-    if(err)
-      console.log("could not get classes")
-    else
-  {db.query(q2 , (err , subjects)=>{
-      if(err)
-        console.log("could not get subjects")
-      else
-        console.log("Data fetched successfully")
-        res.render('takeAttendance', {'classes':classes,'subjects':subjects });
-    })
-  }})
- 
-});
 
 
 
 
-function insertSubject(code, name, year, part) {
-  let q1 = `INSERT IGNORE INTO subject (code, name, year, part) VALUES ("${code}", "${name}", "${year}", "${part}")`;
-  return q1;
-}
-
-function insertInstructor(code, name) {
-  let q1 = `INSERT IGNORE INTO instructor (id, name) VALUES ("${code}", "${name}")`;
-  return q1;
-}
-
-function insertStudent(students, class_id) {
-  let q1 = students.reduce((accumulator, currentValue) => {
-    return accumulator + `("${currentValue.Roll}", "${currentValue.Name}", "${class_id}"),`;
-  }, "");
-  return `INSERT IGNORE INTO student (roll_no, name, class_id) VALUES ` + q1.slice(0, -1);
-}
-
-
-function insertClass(class_id) {
-  let q1 = `INSERT IGNORE INTO class (id) VALUES ("${class_id}")`;
-  return q1;
-}
-
-function insertAttendance(body, students) {
-  let q1 = `INSERT IGNORE INTO attendance (student_id, subject_code, class_id, attendance_date, instructor_id, present) VALUES `;
-  let q2 = students.reduce((accumulator, currentValue) => {
-    return (
-      accumulator +
-      `("${currentValue.Roll}", "${body.SubjectId}", "${body.Class}", "${
-      body.Date
-      }", "${body.InstructorId}", "${currentValue.Status}"),`
-    );
-  }, "");
-  return q1 + q2.slice(0, -1);
-}
-
-
-function insertAttendanceweb(body, students, code) {
-  let q1 = `INSERT INTO attendance (student_id, subject_code, class_id, attendance_date, instructor_id, present) VALUES `;
-  let q2 = students.reduce((accumulator, currentValue) => {
-    return (
-      accumulator +
-      `("${currentValue.roll_no}", "${body.subject_code}", "${body.class_id}", "${
-         new Date().toISOString().slice(0, 10).replace('T', ' ')
-      }", "${code}", "${currentValue.Status}"),`
-    );
-  }, "");
-  return q1 + q2.slice(0, -1);
-}
-//get recent  attendance data saved for admin site viewing
-router.get("/getRecent/:numData",admin,  (req, res, next) => {
-  const numData = req.params.numData;
-  let q1 = `SELECT class_id as class,
-            year,part,
-        date,
-        instructor.name as instructor,
-        subject.name as subject,
-        subject.code as subjectCode,
-       
-        from
-       ( SELECT DISTINCT class_id, instructor_id, subject_code, attendance_date as date from attendance) as a 
-            join instructor on a.instructor_id = id 
-            join subject on a.subject_code = code order by date desc limit ${numData}`;
-            db.query(q1,(err,result)=>{
-            
-              if(err) throw err;
-             
-         
-          })
-});
 
 //instructor can fetch recent of attendance data
 router.get("/getRecent/:numData/:_id",auth,  (req, res, next) => {
+  
   const numData = req.params.numData;
   const  _id= req.params._id;
-  let q1 = `SELECT class_id as class,
+  let q1 = `SELECT DISTINCT class_id as class,
             year,part,
-        
-
-        instructor.name as instructor,
-        
+            class.batch as batch, 
+            class.program_id as program,
+            class.class_group as section,
+            instructor.name as instructor,
         subject.name as subject,
-        subject.code as subjectCode
+        subject.code as subjectCode,
+        a.classType as classType
         
         from
-       ( SELECT DISTINCT class_id, instructor_id, subject_code from attendance ) as a 
-            join instructor on a.instructor_id =id
-            join subject on a.subject_code = code where instructor.id="${_id}" limit ${numData}`
+       ( SELECT * from attendanceDetails ) as a 
+            join instructor on a.instructor_id =instructor.id
+            join subject on a.subject_code = subject.code join class on class.id= a.class_id where instructor.id=${_id} limit ${numData}`
             
             db.query(q1,(err,result)=>{
             
               if(err) throw err;
 
               else {
-                console.log(result)
+              
                 res.render('home.ejs', {'data':result})
               }
          
           })
 });
 
-
-//get attendance of a class of a subject by date
-
-router.get("/:subjectCode/:name", (req, res, next) => {
-  const  subjectCode = req.params.subjectCode;
-  const  instructor  = req.params.name;
-  const sql = `SELECT attendance_date as "Attendance Date", COUNT(CASE WHEN present='P' then 1 ELSE NULL END) as "Present Student" 
-                 from attendance where subject_code = "${subjectCode}"
-                 and instructor_id = (SELECT id from instructor where name ="${instructor}") group by attendance_date`;
-  db.query(sql,(rows) => {
-
-      res.status(200).json(rows);
-      console.log(rows);
-    
-    })
-   
+//route to taking attendance from saved classes and subjects page
+router.get('/take',auth, (req, res, next)=>{
+  res.render('selectClass');
 });
 
 
 
 
+
+
+router.post('/take', auth, (req, res, next)=>
+{
+  batch=req.body.batch;
+  program= req.body.program;
+  section= req.body.section;
+  year= req.body.year;
+  part= req.body.part;
+  let q1 = `SELECT concat(batch, program_id) as class, id as id from class where (batch='${batch}' AND program_id='${program}' AND class_group='${section}');`
+  let q2= `SELECT name as subject, code as code from subject where ( program_id='${program}' AND year=${year} AND part=${part}) ;`
+ 
+
+
+  db.query(q1 , (err , classes)=>{
+    if(err)
+      console.log("could not get the class!"+err)
+    else
+  {
+    db.query(q2, (err, subjects)=>
+    {
+      if (err)
+      console.log("could not get subjects")
+      else
+      {
+        
+    let q3= `select* from student JOIN class on student.class_id=class.id where class.id =${classes[0].id};`
+    db.query(q3, (err, students)=>
+    {
+      if (err)
+      console.log("could not get students")
+      else
+      {
+  
+      console.log("Data fetched successfully")
+      res.render('namelist', {'classes':classes, 'subjects':subjects, 'students':students});
+      }
+    })
+    }})  
+      
+    
+  }})
+
+});
+
+
+
+
+
+router.post("/submit",auth, (req, res, next) => {
+
+  var detailsQuery = `insert ignore into attendanceDetails(classType, subject_code, class_id, attendance_date, instructor_id) values (?, ?, ?, ?, ?)`;
+  var attendanceQuery=`insert ignore into attendance(roll_no, details_id) values ?`;
+  body= req.body
+  var roll_nums=[];
+  var attData= [body.classType.toString().charAt(0), body.subject_code.toString().substring(0, 5), parseInt(body.class_id),new Date().toISOString().slice(0, 10).replace('T', ' '), userdata.id];
+
+  
+ db.query(detailsQuery,attData, (err, result) => {
+  if (err)
+     console.log(err)
+     else  
+  {
+  let detailsID;
+    detailsID = result.insertId;
+    for (var key in body)
+  {
+    if(body[key]=='present')
+    roll_nums.push([key, detailsID])
+  }
+
+    
+     db.query(attendanceQuery,[roll_nums], (err, result)=>{
+
+     if (err)
+     console.log(err)
+     else
+     
+    console.log("attendance saved")
+    res.redirect('/');
+}
+);
+  }
+ 
+  });
+
+
+
+}     
+);
+
+router.get("/delete/:_id" ,auth,(req, res)=>{
+
+  db.query(`DELETE FROM attendance WHERE details_id = ${parseInt(req.params._id)}`, (err2, result2)=>{
+    if (err2)
+    console.log(err2)
+    else{
+  
+    db.query(`DELETE FROM attendanceDetails WHERE id = ${parseInt(req.params._id)}`, (err3, result3)=>{
+  if(err3)
+  console.log(err)
+  else
+  console.log('One Record Deleted')
+  res.redirect('/');
+  
+    
+    })
+    }
+  
+  })
+} )
+
+
+router.get("/edit/:_id" ,auth,(req, res)=>{
+
+  db.query(`SELECT student.roll_no, student.class_id FROM (select * from (select * from attendanceDetails where id=${parseInt(req.params._id)}) as a JOIN attendance on a.id=attendance.details_id ) as b JOIN student on (student.class_id= b.class_id AND student.roll_no = b.roll_no )  `, (err, result)=>{
+    if (err)
+    console.log(err)
+    else{
+db.query(`SELECT name, roll_no from student where class_id = ${result[0].class_id}`, (err2, result2)=>{
+var roll_list= [];
+result.forEach((item)=>{
+  roll_list.push(item.roll_no)
+})
+
+ 
+  
+  res.render('editList', {'students':result2,'present':roll_list, 'id':parseInt(req.params._id)})
+
+})
+
+
+    }
+  
+  })
+} )
+
+router.post("/edit/:_id" ,auth,(req, res)=>{
+var body= req.body
+var roll_nums=[]
+  for (var key in body)
+  {
+    if(body[key]=='present')
+    roll_nums.push([parseInt(req.params._id),key])
+  }
+
+
+  db.query(`DELETE FROM attendance WHERE details_id = ${req.params._id}`, (err, result)=>{
+    if (err)
+    console.log(err)
+    else{
+
+  
+    db.query(`Insert into attendance (details_id, roll_no) values ?`, [roll_nums], (err3, result3)=>{
+  if(err3)
+  console.log(err)
+  else
+  console.log('Record Updated')
+  res.redirect('/');
+  
+    
+    })
+    }
+  
+  })
+  
+})
+
+
+
+router.get("/deleteAll/:class/:subject/:type",auth, (req, res)=>
+{
+ var sql= `select id FROM attendanceDetails WHERE (classType='${req.params.type}' AND subject_code='${req.params.subject}' AND class_id=${req.params.class} AND instructor_id=${parseInt(user)})`
+
+db.query(sql, (err, result)=>{
+  if(err)
+  console.log(err);
+  else
+  {result.forEach((record)=>
+    {
+db.query(`DELETE FROM attendance WHERE details_id = ${record.id}`, (err2, result2)=>{
+  if (err2)
+  console.log(err2)
+  else{
+
+  db.query(`DELETE FROM attendanceDetails WHERE id = ${record.id}`, (err3, result3)=>{
+if(err3)
+console.log(err)
+else
+console.log('Record Deleted')
+res.redirect('/');
+
+  
+  })
+  }
+
+})
+
+
+
+    }
+    
+    
+    )}
+  
+})
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
 //instructors report of a subject of a class
-router.get("/all/:classId/:subjectCode/:instructor", (req, res, next) => {
+router.get("/all/:classId/:subjectCode/:classType",auth, (req, res, next) => {
   const classId=req.params.classId;
   const subjectCode= req.params.subjectCode;
-  const instructor  = req.params.instructor;
-  const sql = `SELECT rollNo, name, date, status, present 
-                 from (SELECT student_id as rollNo,
-                 GROUP_CONCAT(attendance_date order by attendance_date) as date,
-                 GROUP_CONCAT(present order by attendance_date) as status,
-                 COUNT(CASE WHEN present='P' then 1 END) as present
-                 from attendance where
-                 class_id = "${classId}" and
-                 subject_code ="${subjectCode}" and
-                 instructor_id = "${instructor}"
-                 group by student_id) as s
-                 left join student on s.rollNo = roll_no`;
-
+  const instructorId  = parseInt(user);
+  const classType  = req.params.classType;
+  const details={class:classId, subject:subjectCode, type:classType}
+  const sql = `SELECT * from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no) where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}' AND instructor_id =${instructorId} AND classType='${classType}' ) order by attendance_date`;
+  
                  db.query(sql,(err,result)=>{
             
                   if(err) throw err;
-                  else  {console.log((result))
-                    res.render('record', {'records':result})
+                  else  {
+                    sql2 = `SELECT count(a.id) as count, a.roll_no FROM (SELECT attendance.roll_no,id from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no)  where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}' AND instructor_id =${instructorId} AND classType='${classType}' )) as a GROUP by a.roll_no `;
+                   db.query(sql2, (error, counts)=>
+                   {
+                     if (error)
+                     console.log (error)
+                     else
+                    {
+                     var record= new Set(result.map(item=>(parseInt(item.id) ))); 
+                    var final=[];
+                    var final_res;
+                    var last_count;
+                    record.forEach(element=>{
+                      final.push([element,{date:"", students:[]}])
+                    
+                      
+                    })
+                    final_res=Object.fromEntries(final);
+                    result.forEach(element=>
+                      {
+                        
+                        final_res[element.id]["date"]=element.attendance_date;
+                        
+                        
+                        final_res[element.id]["students"].push(element.roll_no)
+                      })
+                    db.query(`SELECT roll_no, name FROM student where class_id =${classId}`, (err, result2)=>
+                    {
+                      pres_count=[];
+                      counts.forEach(item=>{
+                        pres_count.push([item.roll_no,item.count])
+                         last_count= Object.fromEntries(pres_count)
+
+                      }
+                        )
+                    
+                     res.render('record', {'records':final_res, 'students':result2, 'counts':last_count, 'details':details})
+                    }) }
+                   }
+                   ) 
+             
+                    
+                    
                   }
+
+                 
+               
              
               })
 
@@ -191,6 +347,39 @@ router.get("/getAttendance/:classId/:subjectId/:date/", (req, res, next) => {
                     
 });
 
+function insertAttendanceweb(body, students, code) {
+  let q1 = `INSERT INTO attendance (student_id, subject_code, class_id, attendance_date, instructor_id, present) VALUES `;
+  let q2 = students.reduce((accumulator, currentValue) => {
+    return (
+      accumulator +
+      `("${currentValue.roll_no}", "${body.subject_code}", "${body.class_id}", "${
+         new Date().toISOString().slice(0, 10).replace('T', ' ')
+      }", "${code}", "${currentValue.Status}"),`
+    );
+  }, "");
+  return q1 + q2.slice(0, -1);
+}
+
+
+
+
+
+//get attendance of a class of a subject by date
+
+router.get("/:subjectCode/:name", (req, res, next) => {
+  const  subjectCode = req.params.subjectCode;
+  const  instructor  = req.params.name;
+  const sql = `SELECT attendance_date as "Attendance Date", COUNT(CASE WHEN present='P' then 1 ELSE NULL END) as "Present Student" 
+                 from attendance where subject_code = "${subjectCode}"
+                 and instructor_id = (SELECT id from instructor where name ="${instructor}") group by attendance_date`;
+  db.query(sql,(rows) => {
+
+      res.status(200).json(rows);
+      console.log(rows);
+    
+    })
+   
+});
 
 
 router.post("/", (req, res, next) => {
@@ -233,66 +422,5 @@ router.post("/", (req, res, next) => {
 });
 
 
-
-
-router.post("/submit",(req, res, next) => {
-  body= req.body
-  var students=[]
-  let sql = `SELECT * from student where class_id = ?;`;
-    db.query(sql,[body.class_id],(err,student)=>{
-          var status;  
-        if(err) throw err;
-        else { 
-student.forEach(element => {
- element.Status= "P"
-
-
-  if(!body[`${element.roll_no}`])
-  {
-    element.Status = "A"
-  }
-
-
-
-
-
-  
-});
- }
-
-students= student
-})
-    
-    
-
-    
-
-try{
-  db.query('SELECT * FROM user WHERE id = (?)',[req.user],async (err,result)=>{
-    if(err)
-    console.log(err)
-else{
-  await db.query(insertInstructor(result[0].code,result[0].username))
-   
-  await db.query(insertSubject(body.subject_code, body.subject_name, body.subject_year, body.subject_part));
-    
-
-  await db.query(insertClass(body.class_id));
-
- await db.query(insertAttendanceweb(body, students,result[0].code ));
- res.redirect('/')
-}
-
-    })
-  }
-catch(err)
-{
-  console.log(err)
-  res.redirect('back')
-}
-
-
-}     
-);
 
 module.exports = router;

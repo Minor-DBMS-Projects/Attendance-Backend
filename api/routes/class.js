@@ -2,7 +2,7 @@ let express = require('express');
 let db = require("../../config.js/dataconn");
 let router = express.Router();
 let { auth } = require('../../config.js/usercheck');
-let { admin } = require('../../config.js/usercheck');
+
 
 router.get('/', (req, res, next)=>{
    let sql = 'SELECT id  as class from class';

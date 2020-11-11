@@ -36,9 +36,21 @@ class Database {
 
     createTable() {
         /* Create Table */
-        let sql = 'CREATE TABLE IF NOT EXISTS subject (code varchar(16), name varchar(64), year INT, part INT, PRIMARY KEY(code))';
+       
+       
+
+        let sql= 'CREATE TABLE IF NOT EXISTS department (id varchar(16) primary key , name varchar(255))';
         this.query(sql).then(() => {
-            sql = 'CREATE TABLE IF NOT EXISTS instructor (id varchar(64), name varchar(64), PRIMARY KEY(id))';
+            sql = 'CREATE TABLE IF NOT EXISTS program (id varchar(16) primary key, name varchar(64), department_id varchar(16),FOREIGN KEY(department_id) REFERENCES department(id))';
+            return this.query(sql);
+        })
+        .then(() => {
+            sql = 'CREATE TABLE IF NOT EXISTS instructor (id INT UNIQUE KEY AUTO_INCREMENT NOT NULL, code  varchar(16), name varchar(64), PRIMARY KEY(code), password varchar(255), department_id varchar(16),FOREIGN KEY(department_id) REFERENCES department(id))';
+            return this.query(sql);
+        })
+
+        .then(() => {
+            sql = 'CREATE TABLE IF NOT EXISTS subject (code varchar(16),PRIMARY KEY(code), name varchar(64), year INT, part INT, program_id varchar(16),FOREIGN KEY(program_id) REFERENCES program(id))';
             return this.query(sql);
         })
             .then(() => {
@@ -46,36 +58,41 @@ class Database {
                 return this.query(sql);
             })
             .then(() => {
-                sql = 'CREATE TABLE IF NOT EXISTS user (id INT primary key NOT NULL AUTO_INCREMENT, username varchar(255), code varchar(255), password varchar(255), type varchar(255))';
+                sql = 'CREATE TABLE IF NOT EXISTS class (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL, batch varchar(16), class_group varchar(16),program_id varchar(16), UNIQUE KEY (batch, program_id, class_group), FOREIGN KEY (program_id) REFERENCES program(id))';
                 return this.query(sql);
             })
+           
 
             .then(() => {
-                sql = 'CREATE TABLE IF NOT EXISTS class (id varchar(64), PRIMARY KEY(id))'
+                sql = 'CREATE TABLE IF NOT EXISTS student (roll_no varchar(16), name varchar(64),class_id INT,  FOREIGN KEY(class_id) REFERENCES class(id), UNIQUE KEY (roll_no, class_id))';
                 return this.query(sql);
             })
             .then(() => {
-                sql = `CREATE TABLE IF NOT EXISTS student (roll_no varchar(16), name varchar(64), class_id varchar(64), PRIMARY KEY(roll_no),
-                        FOREIGN KEY(class_id) REFERENCES class(id))`;
+                sql = 'CREATE TABLE IF NOT EXISTS attendanceDetails (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL, classType varchar(16), subject_code varchar(16), class_id INT, attendance_date DATE, instructor_id INT )';
                 return this.query(sql);
-            })
-            .then(() => {
-                sql = 'CREATE TABLE IF NOT EXISTS attendance (student_id varchar(16), subject_code varchar(16), class_id varchar(64), attendance_date DATE, instructor_id varchar(64), present char, UNIQUE KEY(student_id, attendance_date, subject_code, instructor_id))';
+            }).then(() => {
+                sql = 'CREATE TABLE IF NOT EXISTS attendance(details_id INT ,roll_no varchar(16))';
                 return this.query(sql);
             }).then(() => {
                 sql = `ALTER TABLE attendance
-                              ADD FOREIGN KEY(student_id) REFERENCES student(roll_no),
+                              ADD FOREIGN KEY(details_id) REFERENCES attendanceDetails(id)
+                              `;
+                 return this.query(sql);
+                 
+                })
+            
+            .then(() => {
+                sql = `ALTER TABLE attendanceDetails
                               ADD FOREIGN KEY(subject_code) REFERENCES subject(code),
                               ADD FOREIGN KEY(instructor_id) REFERENCES instructor(id),
                               ADD FOREIGN KEY(class_id) REFERENCES class(id)
                               `;
-                this.query(sql);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-
-
+                 return this.query(sql);
+                 
+                })
+                .catch(err => {
+                    console.log(err);
+                })
 
 
 

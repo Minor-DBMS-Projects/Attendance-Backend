@@ -70,8 +70,9 @@ body {
     <br>
           
   <a href="/logout">Logout</a>
-  <a href="/add-class">Add Class</a>
   <a href="/attendance/take">Take Attendance</a>
+
+  
   
 </div>
 
@@ -81,30 +82,34 @@ body {
  
   <h2> Teacher's Dashboard</h2>
 
-  <h2>  <%=userdata.username%>'s Recent Classes</h2>
+  <h2>  <%=userdata.name%>'s Classes</h2>
 
 
   <% data.forEach(function(attendance){ %>
 
     <form action="/student/namelist" method="POST">
-    <div class="card" id ="<%=attendance.class%>_<%=attendance.subject%>_<%=attendance.date%>" style = "display: none;position:absolute;background-color:#69d2e7;">
+    <div class="card" id ="<%=attendance.batch%><%=attendance.program%>(<%=attendance.section%>)_<%=attendance.subject%>_<%=attendance.classType%>>" style = "display: none;position:absolute;background-color:#69d2e7;">
       <div class="container">
         <h4><b><input type = "hidden" name= "classid" value ="<%=attendance.class%>">   <p><%=attendance.subject%></p> </b></h4> 
        <input type="hidden" value= "<%=attendance.subjectCode%>" name ="subjectcode" >
-        <p><%=attendance.class%></p>  
-        <h><%=attendance.date%></h>
+       <input type="hidden" value= "<%=attendance.batch%>" name ="batch" >
+       <input type="hidden" value= "<%=attendance.subject%>" name ="subject" >
+       <input type="hidden" value= "<%=attendance.program%>" name ="program" >
+       <input type="hidden" value= "<%=attendance.section%>" name ="section" >
+       <input type="hidden" value= "<%=attendance.classType%>" name ="type" >
+        <p><%=attendance.batch%><%=attendance.program%>(<%=attendance.section%>)_<%=attendance.classType%></p>  
+        <h></h>
         <p>Instructor: <%=attendance.instructor%> </p></p> Year: <%=attendance.year%> Part <%=attendance.part%></p> 
         <button type="submit">Take Attendance</button>
-        <button><a href = "/attendance/all/<%=attendance.class%>/<%=attendance.subjectCode%>/<%=userdata.code%>">View Attendance History</a></button>
-        
+        <button><a href = "/attendance/all/<%=attendance.class%>/<%=attendance.subjectCode%>/<%=attendance.classType%>">View Attendance History</a></button>
       
-      </form>  
+      </form> 
         
       </div>
     </div>
 
 
-    <button name="<%=attendance.class%>_<%=attendance.subject%>_<%=attendance.date%>"  onclick="openForm(this.name)" ><%=attendance.class%>_<%=attendance.subject%>_<%=attendance.date%></button><br>
+    <button name="<%=attendance.batch%><%=attendance.program%>(<%=attendance.section%>)_<%=attendance.subject%>_<%=attendance.classType%>>"  onclick="openForm(this.name)" ><%=attendance.batch%><%=attendance.program%>(<%=attendance.section%>)_<%=attendance.subject%>_<%=attendance.classType%></button><br>
 
     
     <% }) %>

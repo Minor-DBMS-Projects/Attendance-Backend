@@ -2,8 +2,6 @@
 <html>
 <head>
 
-
-
 <style>
 table, th, td {
   border: 1px solid rgb(78, 18, 146);
@@ -12,44 +10,86 @@ table, th, td {
 </style>
 </head>
 <body>
-    
-     
+   <div >
+   
+ <button style="width: 100px;height:40px; background-color:#69d2e7; position:static; margin-top: 50px; border-radius: 10px;">  <a href='/attendance/deleteAll/<%=details.class%>/<%=details.subject%>/<%=details.type%>'>Delete All</a></button> 
+    </div> 
+  </br>
+
+
+  <% Object.keys(records).forEach(function(prop){ %>
+    <div class="card" id ="<%=records[prop].date.toDateString()%><%=prop%>" style = "display: none;">
+      <div class="container">
+  
+        <button ><a href="/attendance/edit/<%=prop%>">Edit</a></button>
+        <button ><a href="/attendance/delete/<%=prop%>">Delete</a></button>
+      </div>
+    </div>
+    <% }) %>
+
+
 <table id = "tableu">
   <col width="150">
   <col width="200">
-  <col width="100">
+  
   <tr>
+    
     <th>Roll_no</th>
     <th>Name</th>
-    <th>Status</th>
+    
+    <% Object.keys(records).forEach(function(prop){ %>
+
+      <th> <button name = "<%=records[prop].date.toDateString()%><%=prop%>" onclick="openForm(this.name)"><%=records[prop].date.toDateString()%></button></th>
+    <% }) %>
     <th>Total</th>
   </tr>
+ 
+  
 
 
-  <% records.forEach(function(record){ %>
+
+<% students.forEach(function(student){ %>
     <tr>
-      <td><%=record.rollNo%></td>
-      <td><%=record.name%></td>
-      <td><%=record.status%></td>
-      <td><%=record.present%></td>
+      <td><%=student.roll_no%></td>
+      <td><%=student.name%></td>
+      <% Object.keys(records).forEach(function(prop){ %>
+      <%  if (records[prop].students.includes(student.roll_no)) { %>
+        <td>P</td>
+     <% }%>
+     <%  if (!records[prop].students.includes(student.roll_no)) { %>
+      <td>A</td>
+   <% }%>
+     
+       
+      <% }) %>
+      <%  if (Object.keys(counts).includes(student.roll_no)) { %>
+        <td><%=counts[student.roll_no]%></td>
+     <% }%>
+     <%  if (!Object.keys(counts).includes(student.roll_no)) { %>
+      <td>0</td>
+   <% }%>
+
+  </tr>
       
     
     </tr>
     <% }) %> 
-
+ 
+     
  
 </table>
-
-
-
 
 </body>
 
 <script>
+  function openForm(id) {
+    if(document.getElementById(id).style.display =="none")
+    document.getElementById(id).style.display = "block";
 
-
-</script>
-
+  else 
+    document.getElementById(id).style.display = "none";
+  }
+  </script>
 
 
 
