@@ -1,16 +1,16 @@
 let express = require("express");
 let db = require("../../config.js/dataconn");
 let { auth } = require('../../config.js/usercheck');
-
+let parser=require('csv-parser')
 let router = express.Router();
-
-
-
+let multer = require('multer');
+let upload= multer({dest:'uploads/'})
+let fs= require('fs')
 
 
 
 //instructor can fetch recent of attendance data
-router.get("/getRecent/:numData/:_id",auth,  (req, res, next) => {
+router.get("/getRecent/:numData",auth,  (req, res, next) => {
   
   const numData = req.params.numData;
   const  _id= req.params._id;
@@ -27,7 +27,7 @@ router.get("/getRecent/:numData/:_id",auth,  (req, res, next) => {
         from
        ( SELECT * from attendanceDetails ) as a 
             join instructor on a.instructor_id =instructor.id
-            join subject on a.subject_code = subject.code join class on class.id= a.class_id where instructor.id=${_id} limit ${numData}`
+            join subject on a.subject_code = subject.code join class on class.id= a.class_id where instructor.id=${userdata.id} limit ${numData}`
             
             db.query(q1,(err,result)=>{
             
@@ -45,10 +45,115 @@ router.get("/getRecent/:numData/:_id",auth,  (req, res, next) => {
 router.get('/take',auth, (req, res, next)=>{
   res.render('selectClass');
 });
+router.get('/takeOnline',auth, (req, res, next)=>{
+  res.render('selectOnlineClass')
+});
+router.post('/takeOnline',auth, (req, res, next)=>{
+ var data= req.body
+ req.session.context=data;
+  res.redirect('/attendance/takeOnlineNext')
+});
+
+router.get('/takeOnlineNext',auth, (req, res, next)=>{
+  
+  var details=req.session.context;
+  
+  var sql = `SELECT name as subject, code as code from subject where ( program_id='${details.program}' AND year=${details.year} AND part=${details.part}) `;
+  db.query(sql, (err, subjects)=>{
+if (err)
+console.log(err)
+else{
+    res.render('upload', {'details':details, 'subjects':subjects})
+}
+
+
+
+  })
+ 
+});
+
+
+
+function insertOnlineRecord(details, names)
+{
+
+var detailsQuery = `insert ignore into attendanceDetails(classType, subject_code, class_id, attendance_date, instructor_id) values (?, ?, ?, ?, ?)`;
+var attendanceQuery=`insert ignore into attendance( details_id, roll_no) values ?`; 
+var roll_nums=[];
+
+db.query(`select a.roll_no, a.class_id from (select name, roll_no, class_id from student where class_id=(select id from class where (batch='${details.batch}' AND program_id='${details.program}' AND class_group='${details.section}'))) as a  WHERE a.name in (?)`,[names], (errs, ress)=>{if (errs)
+console.log(errs)
+else
+{
+  console.log(ress)
+  var attData= [details.classType.toString().charAt(0), details.subject.toString().substring(0, 5), parseInt(ress[0].class_id),new Date().toISOString().slice(0, 10).replace('T', ' '), userdata.id]; 
+
+ db.query(detailsQuery,attData, (err, result) => {
+    if (err)
+       console.log(err)
+       else  
+    {
+    let detailsID;
+      detailsID = result.insertId;
+    ress.forEach((item)=>{
+      roll_nums.push([detailsID, item['roll_no']])
+    })
+  
+      
+       db.query(attendanceQuery,[roll_nums], (err, result)=>{
+  
+       if (err)
+       console.log(err)
+       else
+       
+      console.log("attendance saved")
+      
+  }
+  );
+    }
+   
+    });
+    
 
 
 
 
+
+}
+
+})
+
+ 
+
+
+}
+router.post('/takeOnlineNext',auth,upload.single('atten_file'), (req, res, next)=>{
+  var path =req.file.path
+  var results=[]
+  var final=[]
+  fs.createReadStream(path, 'utf16le').pipe(parser())
+  .on('data', (data)=>results.push(data))
+  .on('end', ()=>{console.log("extracted")
+
+  results.forEach((item)=>{
+   let name= item[0].split('\t')[0].toString()
+    final.push(name)
+  })
+   var namelist = new Set(final)
+   nameList= Array.from(namelist)
+   insertOnlineRecord({'batch':req.body.batch.toString(), 'program':req.body.program.toString(),'classType':req.body.classType.toString().charAt(0), 'section':req.body.section.toString().charAt(0), 'subject':req.body.subject_code.toString().substring(0, 5)}, nameList);
+if (req.body.section.length==2)
+{
+  insertOnlineRecord({'batch':req.body.batch.toString(), 'program':req.body.program.toString(),'classType':req.body.classType.toString().charAt(0), 'section':req.body.section.toString().charAt(1), 'subject':req.body.subject_code.toString().substring(0, 5)}, nameList);
+
+}
+
+res.redirect('/'); 
+
+});
+ 
+ 
+})
 
 
 router.post('/take', auth, (req, res, next)=>
@@ -60,7 +165,7 @@ router.post('/take', auth, (req, res, next)=>
   part= req.body.part;
   let q1 = `SELECT concat(batch, program_id) as class, id as id from class where (batch='${batch}' AND program_id='${program}' AND class_group='${section}');`
   let q2= `SELECT name as subject, code as code from subject where ( program_id='${program}' AND year=${year} AND part=${part}) ;`
- 
+
 
 
   db.query(q1 , (err , classes)=>{
@@ -74,7 +179,7 @@ router.post('/take', auth, (req, res, next)=>
       console.log("could not get subjects")
       else
       {
-        
+        console.log(q2)
     let q3= `select* from student JOIN class on student.class_id=class.id where class.id =${classes[0].id};`
     db.query(q3, (err, students)=>
     {

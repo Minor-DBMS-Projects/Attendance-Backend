@@ -47,11 +47,11 @@ app.use(bodyParser.urlencoded({
 }));
 
 passport.serializeUser(function(user, done) {
-    console.log('in serializeer');
+  
   done(null, user.id);
 });
 passport.deserializeUser(function(user, done) {
-  console.log("in the deserialize");
+  
     done(null, user);
 });
 //view engine

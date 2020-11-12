@@ -1,2 +1,0 @@
-create a add route to fetch data and add user.
-and continue

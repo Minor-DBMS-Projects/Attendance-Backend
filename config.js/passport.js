@@ -24,7 +24,7 @@ module.exports = function(passport)
 				if (err) console.log(err);
 				if(isMatch)
 				{
-console.log("checking.....")
+
 
 					return done(null, row[0]);
 

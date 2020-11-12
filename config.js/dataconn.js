@@ -3,8 +3,8 @@ var mysql        = require('mysql');
       supportBigNumbers: true,
       bigNumberStrings: true,
       host     : "localhost",
-      user     : "kanch",
-      password : "1234",
+      user     : "",
+      password : "",
       database : "schema_attendance"
     });
 

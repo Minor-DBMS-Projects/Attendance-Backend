@@ -40,13 +40,13 @@ table, th, td {
           <%}%> 
           <% if((classes[0].classType=='P') ) {%>
             <input type="hidden" name="classType" value="<%=classes[0].classType%>">
-            <h1>Select Class Type</h1>
+            <h1> Class Type</h1>
             <p>Practical Class</p>
             <%}%> 
 
 
          <% if(!(classes[0].classType=='L'||classes[0].classType=='P') ) {%>
-            <h2> Class Type</h2>
+            <h2> Select Class Type</h2>
           <select id="classType" class="form-control" name="classType">
     
                   <option>Lecture </option>

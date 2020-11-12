@@ -11,8 +11,8 @@ const database_config ={
     supportBigNumbers: true,
     bigNumberStrings: true,
     host: 'localhost',
-    user: 'kanch',
-    password: '1234',
+    user: '',
+    password: '',
     database: databaseName,
     dateStrings:true
 

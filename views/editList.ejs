@@ -31,7 +31,7 @@ table, th, td {
     
     <td>
       
-        <input type="checkbox" id="<%=Student.roll_no%>" name="<%=Student.roll_no%>"  onclick= "changeStatus(this.id)" <%if (present.includes(Student.roll_no)){%>checked<%} %>> 
+        <input type="checkbox" id="<%=Student.roll_no%>" name="<%=Student.roll_no%>"  onclick= "changeStatus(this.id)" <%if (present.includes(Student.roll_no)){%>checked value="present"<%} %>> 
     </td>
   </tr>
   <% }) %> 

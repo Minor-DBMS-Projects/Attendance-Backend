@@ -8,7 +8,12 @@ let { auth } = require('../../config.js/usercheck');
 //login logout routes
 
 router.get('/login',(req, res, next)=>{
+  if(!user)
+  {
   res.render('login');
+  }
+  else
+  res.redirect('/');
 });
 
 
@@ -46,7 +51,7 @@ router.post('/login',function(request, response, next)
 router.get('/',auth, (req, res, next)=>{
   
    
-   res.redirect('/attendance/getRecent/30/'+userdata.id);
+   res.redirect('/attendance/getRecent/30');
 
     
 });

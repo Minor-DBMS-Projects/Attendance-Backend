@@ -12,17 +12,17 @@ table, th, td {
 <body>
    <div >
    
- <button style="width: 100px;height:40px; background-color:#69d2e7; position:static; margin-top: 50px; border-radius: 10px;">  <a href='/attendance/deleteAll/<%=details.class%>/<%=details.subject%>/<%=details.type%>'>Delete All</a></button> 
+ <button style="width: 100px;height:40px; background-color:#69d2e7; margin-top: 50px; border-radius: 10px;">  <a href='/attendance/deleteAll/<%=details.class%>/<%=details.subject%>/<%=details.type%>'>Delete All</a></button> 
     </div> 
   </br>
 
 
   <% Object.keys(records).forEach(function(prop){ %>
-    <div class="card" id ="<%=records[prop].date.toDateString()%><%=prop%>" style = "display: none;">
+    <div class="modal" id ="<%=records[prop].date.toDateString()%><%=prop%>" style = "position: absolute; background-color:#69d2e7;display: none;margin-left:200px;margin-top: 0; width:200px;height:100px;border-radius: 10px;">
       <div class="container">
-  
-        <button ><a href="/attendance/edit/<%=prop%>">Edit</a></button>
-        <button ><a href="/attendance/delete/<%=prop%>">Delete</a></button>
+      </br>
+        <button style="position: relative;margin-left: 50px;margin-top: 20px;"  ><a href="/attendance/edit/<%=prop%>">Edit</a></button>
+        <button><a href="/attendance/delete/<%=prop%>">Delete</a></button>
       </div>
     </div>
     <% }) %>
@@ -41,7 +41,7 @@ table, th, td {
 
       <th> <button name = "<%=records[prop].date.toDateString()%><%=prop%>" onclick="openForm(this.name)"><%=records[prop].date.toDateString()%></button></th>
     <% }) %>
-    <th>Total</th>
+    <th>Total Present</th>
   </tr>
  
   
