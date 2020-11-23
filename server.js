@@ -1,6 +1,6 @@
 const http = require('http');
 const app = require('./app');
-const {expressConfig} = require('./configs');
+const {expressConfig} = require('./configurations/configs');
 
 
 

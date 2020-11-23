@@ -1,12 +1,11 @@
 var createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const passport= require('passport');
+const passport = require('passport');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const path = require('path');
-let db = require("./config.js/dataconn");
-
+const db = require('./api/routes/database')
 const app = express();
 
 
@@ -39,7 +38,7 @@ app.set('trust proxy', 1);
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./config.js/passport')(passport);
+require('./configurations/passport')(passport);
 
 //Utility tools to read request body
 app.use(bodyParser.urlencoded({
@@ -66,22 +65,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 
-app.get('*', function(req, res,next)
-{
-  user=req.user||null
-  
+app.get('*', async function (req, res, next) {
+  user = req.user || null
+  const sql = `SELECT * FROM instructor WHERE id =${user} limit 1`;
+  let result;
+  try {
+    result = await db.query(sql);
+  }
+  catch (err) {
+    console.log(err)
+  }
+  userdata = result[0];
+  next();
 
-  db.query("select * from instructor where id = ? limit 1", [user],function (err, result) {
-    if (err) throw err;
-    
-   userdata = result[0]
-  
-    next()
-  });
-  
 })
-
-
 
 
 //CORS handling
@@ -96,8 +93,6 @@ app.use('/subject', subjectRoute);
 app.use('/instructor', instructorRoute);
 app.use('/password', passwordRoute);
 app.use('/', indexRoute);
-
-
 
 
 

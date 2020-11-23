@@ -1,19 +1,9 @@
-let express = require('express');
-let db = require("../../config.js/dataconn");
-let router = express.Router();
-let { auth } = require('../../config.js/usercheck');
-let { admin } = require('../../config.js/usercheck');
+const express = require('express');
+const db = require("./database");
+const router = express.Router();
+const { auth } = require('../../configurations/usercheck');
 
 
-router.get('/', (req, res, next)=>{
 
-    let sql = 'SELECT * from instructor;';
-    db.query(sql,(err,result)=>{
-            
-        if(err) throw err;
-        else  console.log(result)
-   
-    })
-});
 
 module.exports = router;
