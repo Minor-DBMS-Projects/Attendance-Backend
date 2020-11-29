@@ -46,6 +46,10 @@ router.post("/take", auth, async (req, res, next) => {
     section = req.body.section;
     year = req.body.year;
     part = req.body.part;
+    if (req.body.subject !== undefined) {
+        subject = JSON.parse(req.body.subject);
+    }
+
     let q1 = `SELECT concat(batch, program_id) as class, id as id from class where (batch='${batch}' AND program_id='${program}' AND class_group='${section}');`;
     let q2 = `SELECT name as subject, code as code from subject where ( program_id='${program}' AND year=${year} AND part=${part}) ;`;
     let classes, subjects, students;
@@ -55,10 +59,12 @@ router.post("/take", auth, async (req, res, next) => {
     } catch (err) {
         console.log("could not get the class!" + err);
     }
-    try {
-        subjects = await db.query(q2);
-    } catch (err) {
-        console.log("could not get the subjects!" + err);
+    if (req.body.subject === undefined) {
+        try {
+            subjects = await db.query(q2);
+        } catch (err) {
+            console.log("could not get the subjects!" + err);
+        }
     }
     try {
         let q3 = `select* from student JOIN class on student.class_id=class.id where class.id =${classes[0].id};`;
@@ -67,8 +73,15 @@ router.post("/take", auth, async (req, res, next) => {
     } catch (err) {
         console.log("could not get the students!" + err);
     }
-
-    res.json({ classes: classes, subjects: subjects, students: students });
+    if (req.body.subject === undefined) {
+        res.json({ classes: classes, subjects: subjects, students: students });
+    } else {
+        res.json({
+            classes: classes,
+            subjects: [{ code: subject[0], subject: subject[1] }],
+            students: students,
+        });
+    }
 });
 
 //submit attendance
