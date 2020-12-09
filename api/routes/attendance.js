@@ -276,6 +276,67 @@ router.get(
         }
     }
 );
+//report of a class irrespective of instructor
+
+router.get(
+    "/allRecord/:classId/:subjectCode/:classType",
+  
+    async (req, res, next) => {
+        const classId = req.params.classId;
+        const subjectCode = req.params.subjectCode;
+        const classType = req.params.classType;
+        const details = {
+            class: classId,
+            subject: subjectCode,
+            type: classType,
+        };
+
+        let attendanceList = [];
+        let presentCount = [];
+        let sql1 = `SELECT  * from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no) where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}'  AND classType='${classType}' ) order by attendance_date`;
+        let sql2 = `SELECT count(a.id) as count, a.roll_no FROM (SELECT attendance.roll_no,id from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no)  where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}'  AND classType='${classType}' )) as a GROUP by a.roll_no `;
+        let sql3 = `SELECT roll_no, name FROM student where class_id =${classId}`;
+        let sql4 = `SELECT * FROM class where id = ${classId}`;
+        let sql5 = `SELECT name FROM subject where code = "${subjectCode}"`;
+        let result, counts, students, classes, subjects;
+
+        try {
+            result = await db.query(sql1);
+            counts = await db.query(sql2);
+            students = await db.query(sql3);
+            classes = await db.query(sql4);
+            subjects = await db.query(sql5);
+
+            let ids = new Set(result.map((item) => parseInt(item.id)));
+
+            ids.forEach((element) => {
+                attendanceList.push([element, { date: "", students: [] }]);
+            });
+
+            attendanceList = Object.fromEntries(attendanceList);
+            result.forEach((element) => {
+                attendanceList[element.id]["date"] = element.attendance_date;
+                attendanceList[element.id]["students"].push(element.roll_no);
+            });
+            counts.forEach((item) => {
+                presentCount.push([item.roll_no, item.count]);
+            });
+            presentCount = Object.fromEntries(presentCount);
+            details.batch = classes[0].batch;
+            details.program = classes[0].program_id;
+            details.section = classes[0].class_group;
+            details.subjectName = subjects[0].name;
+            res.json({
+                records: attendanceList,
+                students: students,
+                details: details,
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    }
+);
+
 
 router.get("/edit/:_id", auth, async (req, res) => {
     let q1 = `SELECT student.roll_no, student.class_id FROM (select * from (select * from attendanceDetails where id=${parseInt(

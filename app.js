@@ -19,6 +19,10 @@ const instructorRoute = require('./api/routes/instructor');
 const attendanceRoute = require('./api/routes/attendance');
 const classRoute = require('./api/routes/class');
 const passwordRoute = require('./api/routes/password');
+const departmentRoute = require('./api/routes/department');
+const programRoute = require('./api/routes/program');
+const adminauthRoute = require('./api/routes/adminauth');
+
 
 
 
@@ -92,6 +96,9 @@ app.use('/attendance', attendanceRoute);
 app.use('/subject', subjectRoute);
 app.use('/instructor', instructorRoute);
 app.use('/password', passwordRoute);
+app.use('/department', departmentRoute);
+app.use('/program', programRoute);
+app.use('/adminauth', adminauthRoute);
 app.use('/', indexRoute);
 
 

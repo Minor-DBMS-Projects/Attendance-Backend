@@ -160,4 +160,147 @@ router.post("/add-sub", (req, res) => {
   );
 });
 
+
+router.post('/edit-user',async function (req, res, next) {
+
+    let q1 = `UPDATE instructor set name="${req.body.username}", code="${req.body.code}", department_id="${req.body.dept}" WHERE id=${req.body.id}`;
+    try{
+    await db.query(q1)
+    console.log('user edited');
+    }
+    catch(err)
+    {
+        console.log(err)
+    }
+  }
+ 
+  );
+
+  /*router.post('/edit-user-key',async function (req, res, next) {
+    try{
+  
+    const salt =  await bcrypt.genSaltSync();
+    var hash =   await bcrypt.hashSync(req.body.password, salt);
+    saltedpassword = hash;
+    }
+   catch(err)
+  {
+    console.log("saltingerr..."+err);
+  }
+
+    let q1 = `UPDATE instructor set password="${hash}" WHERE id=${req.body.id}`;
+    await db.query(q1)
+    console.log('user key edited');
+ 
+  res.redirect('/login');
+  }
+
+);
+*/
+  router.post('/delete-user',async function (req, res, next) {
+   
+    let q1 = `DELETE FROM instructor WHERE id=${req.body.id}`;
+    try{
+        await db.query(q1)
+        console.log('user deleted');
+        }
+        catch(err)
+        {
+            console.log(err)
+        }
+  }
+ 
+  );
+
+  router.post('/add-program',async function (req, res, next) {
+   
+    let q1 = `INSERT IGNORE INTO program (id, name, department_id) values ("${req.body.id}", "${req.body.name}", "${req.body.dept}")`;
+    try{
+        await db.query(q1)
+        console.log('program added');
+        }
+        catch(err)
+        {
+            console.log(err)
+        }
+  }
+ 
+  );
+
+  router.post('/edit-program',async function (req, res, next) {
+   
+    let q1 = `UPDATE program set id="${req.body.id}", name="${req.body.name}", department_id="${req.body.dept}" WHERE id="${req.body.previd}"`;
+    try{
+        await db.query(q1)
+        console.log('program updated');
+        }
+        catch(err)
+        {
+            console.log(err)
+        }
+  }
+ 
+  );
+
+  router.post('/add-department',async function (req, res, next) {
+   
+    let q1 = `INSERT IGNORE INTO department (id, name) values ("${req.body.id}", "${req.body.name}")`;
+    try{
+        await db.query(q1)
+        console.log('department saved');
+        }
+        catch(err)
+        {
+            console.log(err)
+        }
+  }
+ 
+  );
+
+  router.post('/edit-department',async function (req, res, next) {
+   
+    let q1 = `UPDATE department set id="${req.body.id}", name="${req.body.name}" WHERE id="${req.body.previd}";`;
+    try{
+        await db.query(q1)
+        console.log('department updated');
+        }
+        catch(err)
+        {
+            console.log(err)
+        }
+  }
+ 
+  );
+
+  router.post('/delete-program',async function (req, res, next) {
+   
+    let q1 = `DELETE FROM program WHERE id="${req.body.id}"`;
+    try{
+        await db.query(q1)
+        console.log('program deleted');
+        }
+        catch(err)
+        {
+            console.log(err)
+        }
+  }
+ 
+  );
+
+  router.post('/delete-department',async function (req, res, next) {
+   
+    let q1 = `DELETE FROM department WHERE id="${req.body.id}"`;
+    try{
+        await db.query(q1)
+        console.log('deartmet deleted');
+        }
+        catch(err)
+        {
+            console.log(err)
+        }
+  }
+ 
+  );
+
+
 module.exports = router;

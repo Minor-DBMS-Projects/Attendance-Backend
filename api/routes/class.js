@@ -3,6 +3,21 @@ let db = require("./database");
 let router = express.Router();
 const { auth } = require("../../configurations/usercheck");
 
+router.get("/getSec", async(req, res)=>{
+    let secQuery =`SELECT class_group from class Where (batch='${req.body.batch}' AND program_id='${req.body.program}');`
+    console.log(secQuery)
+    try{
+        let sections=await db.query(secQuery)
+        res.status(200).json({sections:sections});
+    }
+    catch(err)
+    {
+        res.status(401).send("not found");
+        
+    }
+
+})
+
 router.post("/add-class", auth, async (req, res, err) => {
     batch = req.body.batch;
     program = req.body.program;
@@ -24,5 +39,7 @@ router.post("/add-class", auth, async (req, res, err) => {
     }
     res.sendStatus(200);
 });
+
+
 
 module.exports = router;
