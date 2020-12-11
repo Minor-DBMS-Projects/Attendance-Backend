@@ -20,7 +20,7 @@
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
-    "fast-csv": "^4.3.5",
+    "fast-csv": "^4.3.6",
     "follow-redirects": "^1.10.0",
     "http-errors": "^1.6.3",
     "iconv": "^3.0.0",
