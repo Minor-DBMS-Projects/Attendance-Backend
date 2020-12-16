@@ -28,16 +28,13 @@ router.get("/getRecent/:numData", auth, async (req, res, next) => {
 
     try {
         let result = await db.query(q1);
-        res.json(result);
+        res.status(200).json(result);
     } catch (err) {
         console.log(err);
+        res.status(402).send("not found");
     }
 });
 
-//route to taking attendance from saved classes and subjects page
-router.get("/take", auth, (req, res, next) => {
-    res.render("selectClass");
-});
 
 //get the selected class data for atteandance
 router.post("/take", auth, async (req, res, next) => {
@@ -108,32 +105,13 @@ router.post("/submit", auth, async (req, res, next) => {
         console.log("attendance saved");
     } catch (err) {
         console.log("Couldn't save attendance" + "  " + err);
+        res.status(402).send("not found");
     }
-    res.redirect("/");
+    
 });
 
 //select class for online class attendance
-router.get("/takeOnline", auth, (req, res, next) => {
-    res.render("selectOnlineClass");
-});
 
-router.post("/takeOnline", auth, (req, res, next) => {
-    let data = req.body;
-    req.session.context = data;
-    res.redirect("/attendance/takeOnlineNext");
-});
-
-router.get("/takeOnlineNext", auth, async (req, res, next) => {
-    let details = req.session.context;
-
-    let sql = `SELECT name as subject, code as code from subject where ( program_id='${details.program}' AND year=${details.year} AND part=${details.part}) `;
-    try {
-        subjects = await db.query(sql);
-        res.render("upload", { details: details, subjects: subjects });
-    } catch (err) {
-        console.log(err);
-    }
-});
 
 async function insertOnlineRecord(details, names) {
     let detailsQuery = `insert ignore into attendanceDetails(classType, subject_code, class_id, attendance_date, instructor_id) values (?, ?, ?, ?, ?)`;
@@ -149,7 +127,7 @@ async function insertOnlineRecord(details, names) {
             details.subject.toString().substring(0, 5),
             parseInt(presentList[0].class_id),
             new Date().toISOString().slice(0, 10).replace("T", " "),
-            req.user,
+            details.instructorId,
         ];
 
         let result = await db.query(detailsQuery, attendanceData);
@@ -162,6 +140,7 @@ async function insertOnlineRecord(details, names) {
         console.log("attendance saved");
     } catch (err) {
         console.log("failed to save record" + err);
+        //
     }
 }
 
@@ -177,8 +156,6 @@ router.post(
             .pipe(parser())
             .on("data", (data) => results.push(data))
             .on("end", () => {
-                console.log("extracted");
-
                 results.forEach((item) => {
                     let name = item[0].split("\t")[0].toString();
                     final.push(name);
@@ -194,6 +171,7 @@ router.post(
                         subject: req.body.subject_code
                             .toString()
                             .substring(0, 5),
+                        instructorId:req.user
                     },
                     nameList
                 );
@@ -207,12 +185,18 @@ router.post(
                             subject: req.body.subject_code
                                 .toString()
                                 .substring(0, 5),
+                            instructorId:req.user
                         },
                         nameList
                     );
                 }
-                res.redirect("/");
+  
             });
+            fs.unlink(path, function (delerr) {
+                if (delerr) throw delerr;
+                res.status(200).send("done")
+            }); 
+
     }
 );
 
@@ -273,6 +257,7 @@ router.get(
             });
         } catch (err) {
             console.log(err);
+            res.status(402).send("not found");
         }
     }
 );
@@ -333,34 +318,11 @@ router.get(
             });
         } catch (err) {
             console.log(err);
+            res.status(402).send("not found");
         }
     }
 );
 
-
-router.get("/edit/:_id", auth, async (req, res) => {
-    let q1 = `SELECT student.roll_no, student.class_id FROM (select * from (select * from attendanceDetails where id=${parseInt(
-        req.params._id
-    )}) as a JOIN attendance on a.id=attendance.details_id ) as b JOIN student on (student.class_id= b.class_id AND student.roll_no = b.roll_no ) `;
-    let roll_list = [];
-    try {
-        let presentRoll = await db.query(q1);
-        presentRoll.forEach((item) => {
-            roll_list.push(item.roll_no);
-        });
-
-        let result2 = await db.query(
-            `SELECT name, roll_no from student where class_id = ${presentRoll[0].class_id}`
-        );
-        res.render("editList", {
-            students: result2,
-            present: roll_list,
-            id: parseInt(req.params._id),
-        });
-    } catch (err) {
-        console.log(err);
-    }
-});
 
 router.post("/edit/:_id", auth, async (req, res) => {
     var body = req.body.students;
@@ -379,10 +341,12 @@ router.post("/edit/:_id", auth, async (req, res) => {
             `Insert into attendance (details_id, roll_no) values ?`,
             [roll_nums]
         );
-        res.redirect("/");
+        res.status(200).send("done");
         console.log("Record Updated");
     } catch (err) {
         console.log(err);
+         res.status(402).send("not found");
+
     }
 });
 
@@ -399,10 +363,13 @@ router.get("/delete/:_id", auth, async (req, res) => {
             )}`
         );
         console.log("One Record Deleted");
+        res.status(200).send("ok");
     } catch (err) {
+
         console.log(err);
+        res.status(402).send("not found");
     }
-    res.redirect("/");
+  
 });
 
 router.get("/deleteAll/:class/:subject/:type", auth, async (req, res) => {
@@ -421,10 +388,12 @@ router.get("/deleteAll/:class/:subject/:type", auth, async (req, res) => {
                 `DELETE FROM attendanceDetails WHERE id = ${record.id}`
             );
             console.log("Record Deleted");
+            res.status(402).send("not found");
         });
-        res.redirect("/");
+        
     } catch (err) {
         console.log(err);
+        res.status(402).send("not found");
     }
 });
 

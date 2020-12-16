@@ -4,10 +4,6 @@ const bcrypt = require("bcryptjs");
 const http = require("follow-redirects").http;
 const router = express.Router();
 
-router.get("/add-user", (req, res, next) => {
-    res.render("add-user");
-});
-
 router.post("/add-user", async function (req, res, next) {
     let salt = await bcrypt.genSalt(10);
     let pass = await bcrypt.hash(req.body.password, salt);
@@ -19,16 +15,9 @@ router.post("/add-user", async function (req, res, next) {
         console.log(err);
     }
     console.log("user saved");
-    res.redirect("/login");
+    
 });
 
-router.get("/add-class", (req, res) => {
-    res.render("add-class");
-});
-
-router.get("/add-sub", (req, res) => {
-    res.render("add-sub");
-});
 
 function performRequest(options, data, success) {
     let dataString = data;
@@ -107,7 +96,6 @@ router.post("/add-class", (req, res) => {
 
     addClass(program, batch, section.charAt(0));
     addClass(program, batch, section.charAt(1));
-    res.redirect("/");
 });
 
 router.post("/add-sub", (req, res) => {
@@ -151,8 +139,6 @@ router.post("/add-sub", (req, res) => {
             } catch (err) {
                 console.log(err);
             }
-
-            res.redirect("/");
         }
     );
 });

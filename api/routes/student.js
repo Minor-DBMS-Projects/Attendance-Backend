@@ -27,7 +27,7 @@ router.post('/namelist', auth, async(req, res, next)=>
   });
   }
   catch(err){
-    console.log("Students not found"+err)
+    res.status(402).send("not found");
   }   
 
 });
