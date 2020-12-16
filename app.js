@@ -1,11 +1,9 @@
-var createError = require('http-errors');
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const passport = require('passport');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const path = require('path');
-const db = require('./api/routes/database')
 const app = express();
 
 
@@ -18,7 +16,7 @@ const subjectRoute = require('./api/routes/subject');
 const instructorRoute = require('./api/routes/instructor');
 const attendanceRoute = require('./api/routes/attendance');
 const classRoute = require('./api/routes/class');
-const passwordRoute = require('./api/routes/password');
+const authRoute = require('./api/routes/authentication');
 const departmentRoute = require('./api/routes/department');
 const programRoute = require('./api/routes/program');
 const adminauthRoute = require('./api/routes/adminauth');
@@ -39,24 +37,14 @@ app.use(session({ secret: 'secrettexthere',
 
 app.set('trust proxy', 1);
 
-app.use(passport.initialize());
-app.use(passport.session());
 
-require('./configurations/passport')(passport);
 
 //Utility tools to read request body
 app.use(bodyParser.urlencoded({
     extended : false
 }));
 
-passport.serializeUser(function(user, done) {
-  
-  done(null, user.id);
-});
-passport.deserializeUser(function(user, done) {
-  
-    done(null, user);
-});
+
 //view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -69,24 +57,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 
-app.get('*', async function (req, res, next) {
-  user = req.user || null
-  const sql = `SELECT * FROM instructor WHERE id =${user} limit 1`;
-  let result;
-  try {
-    result = await db.query(sql);
-  }
-  catch (err) {
-    console.log(err)
-  }
-  userdata = result[0];
-  next();
-
-})
-
-
-//CORS handling
-
 
 //Forward routes
 app.use('/secret', adminRoute);
@@ -95,7 +65,7 @@ app.use('/class', classRoute);
 app.use('/attendance', attendanceRoute);
 app.use('/subject', subjectRoute);
 app.use('/instructor', instructorRoute);
-app.use('/password', passwordRoute);
+app.use('/authentication', authRoute);
 app.use('/department', departmentRoute);
 app.use('/program', programRoute);
 app.use('/adminauth', adminauthRoute);

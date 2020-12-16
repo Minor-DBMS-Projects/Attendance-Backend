@@ -1,11 +1,43 @@
 const db = require('./configs');
-const isauth = (req, res, next) => {
-  if (req.isAuthenticated()) {
+var jwt = require("jsonwebtoken");
 
-    next()
+const { JWT_KEY } = process.env;
+
+
+const isAuth = (req, res, next) => {
+
+  if (req.method === "OPTIONS") {
+    return next();
   }
-  else
-    res.redirect('/login')
-}
+ 
+  let token =req.headers.authorization; 
 
-module.exports.auth = isauth
+  if (!token) {
+  
+    return res.status(401).send({ message: "No token provided!" });
+  }
+  
+  
+  jwt.verify(token, JWT_KEY, (err, decoded) => {
+    
+    if (err) {
+      
+
+      return res.status(401).send({ message: "invalid!"+err });
+    }
+    else
+    {
+    
+    req.user = decoded.userId;
+    
+    
+    next();
+    }
+  });
+};
+
+
+
+module.exports.auth = isAuth
+
+

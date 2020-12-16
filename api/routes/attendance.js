@@ -24,7 +24,7 @@ router.get("/getRecent/:numData", auth, async (req, res, next) => {
         from
        ( SELECT * from attendanceDetails ) as a 
             join instructor on a.instructor_id =instructor.id
-            join subject on a.subject_code = subject.code join class on class.id= a.class_id where instructor.id=${userdata.id} limit ${numData}`;
+            join subject on a.subject_code = subject.code join class on class.id= a.class_id where instructor.id=${req.user} limit ${numData}`;
 
     try {
         let result = await db.query(q1);
@@ -95,7 +95,7 @@ router.post("/submit", auth, async (req, res, next) => {
         body.subject_code.toString().substring(0, 5),
         parseInt(body.class_id),
         new Date().toISOString().slice(0, 10).replace("T", " "),
-        userdata.id,
+        req.user,
     ];
 
     try {
@@ -149,7 +149,7 @@ async function insertOnlineRecord(details, names) {
             details.subject.toString().substring(0, 5),
             parseInt(presentList[0].class_id),
             new Date().toISOString().slice(0, 10).replace("T", " "),
-            userdata.id,
+            req.user,
         ];
 
         let result = await db.query(detailsQuery, attendanceData);
@@ -223,7 +223,7 @@ router.get(
     async (req, res, next) => {
         const classId = req.params.classId;
         const subjectCode = req.params.subjectCode;
-        const instructorId = parseInt(user);
+        const instructorId = parseInt(req.user);
         const classType = req.params.classType;
         const details = {
             class: classId,
