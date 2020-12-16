@@ -102,7 +102,7 @@ router.post("/submit", auth, async (req, res, next) => {
             if (body[key] == "present") roll_nums.push([key, detailsID]);
         }
         await db.query(attendanceQuery, [roll_nums]);
-        console.log("attendance saved");
+        res.status(200).send("attendance saved");
     } catch (err) {
         console.log("Couldn't save attendance" + "  " + err);
         res.status(402).send("not found");

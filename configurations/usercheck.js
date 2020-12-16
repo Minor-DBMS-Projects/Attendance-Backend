@@ -14,7 +14,7 @@ const isAuth = (req, res, next) => {
 
   if (!token) {
   
-    return res.status(401).send({ message: "No token provided!" });
+     res.status(401).send({ message: "No token provided!" });
   }
   
   
@@ -23,7 +23,7 @@ const isAuth = (req, res, next) => {
     if (err) {
       
 
-      return res.status(401).send({ message: "invalid!"+err });
+     res.status(401).send({ message: "invalid!"+err });
     }
     else
     {
