@@ -9,7 +9,7 @@ const fs = require("fs");
 
 //instructor can fetch recent of attendance data
 router.get("/getRecent/:numData", auth, async (req, res, next) => {
-    console.log(res)
+  
     const numData = req.params.numData;
     const _id = req.params._id;
     let q1 = `SELECT DISTINCT class_id as class,
@@ -149,11 +149,11 @@ router.post(
     "/takeOnlineNext",
     auth,
     upload.single("atten_file"),
-    (req, res, next) => {
+    async (req, res, next) => {
         let path = req.file.path;
         let results = [];
         let final = [];
-        fs.createReadStream(path, "utf16le")
+      await   fs.createReadStream(path, "utf16le")
             .pipe(parser())
             .on("data", (data) => results.push(data))
             .on("end", () => {

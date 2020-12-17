@@ -45,9 +45,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 
-//view engine
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+
 
 //Debug setup
 app.use(logger('dev'));

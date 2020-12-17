@@ -11,8 +11,10 @@ router.post("/add-user", async function (req, res, next) {
     let sql = `INSERT IGNORE INTO instructor (name, password, code, department_id) values ("${req.body.username}","${pass}","${req.body.code}", "${req.body.dept}")`;
     try {
         await db.query(sql);
+        res.status(200).send("ok")
     } catch (err) {
         console.log(err);
+        res.status(402).send(err)
     }
     console.log("user saved");
     

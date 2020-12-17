@@ -22,5 +22,33 @@ router.post("/getSubject", async (req, res, next) => {
     }
 });
 
+router.get('/', async(req, res, next)=>{
+
+    let sql = 'SELECT * from subject order by program_id, year, part, name;';
+    
+   try{ let result= await db.query(sql)
+    res.json(result); 
+   }
+   catch(err)
+   {
+       throw err;
+   }   
+       
+    
+});
+
+router.get('/:_code', async(req, res, next)=>{
+
+    let sql = `SELECT * from subject WHERE code="${req.params._code}";`;
+     
+    try{ let result= await db.query(sql)
+        res.json(result); 
+       }
+       catch(err)
+       {
+           throw err;
+       }  
+});
+
 
 module.exports = router;

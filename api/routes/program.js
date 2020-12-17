@@ -5,7 +5,7 @@ const { auth } = require('../../configurations/usercheck');
 
 router.get('/', async(req, res, next)=>{
 
-    let sql = 'SELECT * from program;';
+    let sql = 'SELECT * from program ;';
     
    try{ let result= await db.query(sql)
     res.json(result); 
