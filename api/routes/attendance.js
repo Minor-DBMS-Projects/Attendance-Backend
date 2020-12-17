@@ -9,6 +9,7 @@ const fs = require("fs");
 
 //instructor can fetch recent of attendance data
 router.get("/getRecent/:numData", auth, async (req, res, next) => {
+    console.log(res)
     const numData = req.params.numData;
     const _id = req.params._id;
     let q1 = `SELECT DISTINCT class_id as class,
@@ -24,7 +25,7 @@ router.get("/getRecent/:numData", auth, async (req, res, next) => {
         from
        ( SELECT * from attendanceDetails ) as a 
             join instructor on a.instructor_id =instructor.id
-            join subject on a.subject_code = subject.code join class on class.id= a.class_id where instructor.id=${req.user} limit ${numData}`;
+            join subject on a.subject_code = subject.code join class on class.id= a.class_id where instructor.id=${req.user} order by batch, program,  subject.name, section limit ${numData}  `;
 
     try {
         let result = await db.query(q1);
