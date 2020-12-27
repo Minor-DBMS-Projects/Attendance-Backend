@@ -19,6 +19,7 @@ router.post('/namelist', auth, async(req, res, next)=>
 
   let q= `select* from student JOIN class on student.class_id=class.id where class.id =${classId};`
   try{
+    
   let students= await db.query(q);
   res.json({
     classes: [classDetails],
@@ -27,6 +28,7 @@ router.post('/namelist', auth, async(req, res, next)=>
   });
   }
   catch(err){
+
     res.status(402).send("not found");
   }   
 

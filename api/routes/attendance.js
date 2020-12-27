@@ -25,7 +25,7 @@ router.get("/getRecent/:numData", auth, async (req, res, next) => {
         from
        ( SELECT * from attendanceDetails ) as a 
             join instructor on a.instructor_id =instructor.id
-            join subject on a.subject_code = subject.code join class on class.id= a.class_id where instructor.id=${req.user} order by batch, program,  subject.name, section limit ${numData}  `;
+            join subject NATURAL JOIN subjectDetails on a.subject_code = subject.code join class on class.id= a.class_id where instructor.id=${req.user} order by batch, program,  subject.name, section limit ${numData}  `;
 
     try {
         let result = await db.query(q1);
@@ -49,19 +49,24 @@ router.post("/take", auth, async (req, res, next) => {
     }
 
     let q1 = `SELECT concat(batch, program_id) as class, id as id from class where (batch='${batch}' AND program_id='${program}' AND class_group='${section}');`;
-    let q2 = `SELECT name as subject, code as code from subject where ( program_id='${program}' AND year=${year} AND part=${part}) ;`;
+    let q2 = `SELECT name as subject, code as code from subject NATURAL JOIN subjectDetails where ( program_id='${program}' AND year=${year} AND part=${part}) ;`;
     let classes, subjects, students;
 
     try {
         classes = await db.query(q1);
     } catch (err) {
         console.log("could not get the class!" + err);
+        res.status(402).send("not found");
     }
     if (req.body.subject === undefined) {
         try {
+
             subjects = await db.query(q2);
+
         } catch (err) {
             console.log("could not get the subjects!" + err);
+
+            res.status(402).send("not found");
         }
     }
     try {
@@ -70,6 +75,7 @@ router.post("/take", auth, async (req, res, next) => {
         console.log("Data fetched successfully");
     } catch (err) {
         console.log("could not get the students!" + err);
+        res.status(402).send("not found");
     }
     if (req.body.subject === undefined) {
         res.json({ classes: classes, subjects: subjects, students: students });
@@ -137,7 +143,6 @@ async function insertOnlineRecord(details, names) {
             roll_nums.push([detailsID, item["roll_no"]]);
         });
         await db.query(attendanceQuery, [roll_nums]);
-
         console.log("attendance saved");
     } catch (err) {
         console.log("failed to save record" + err);
@@ -219,19 +224,20 @@ router.get(
         let attendanceList = [];
         let presentCount = [];
         let sql1 = `SELECT  * from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no) where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}' AND instructor_id =${instructorId} AND classType='${classType}' ) order by attendance_date`;
-        let sql2 = `SELECT count(a.id) as count, a.roll_no FROM (SELECT attendance.roll_no,id from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no)  where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}' AND instructor_id =${instructorId} AND classType='${classType}' )) as a GROUP by a.roll_no `;
+        //let sql2 = `SELECT count(a.id) as count, a.roll_no FROM (SELECT attendance.roll_no,id from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no)  where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}' AND instructor_id =${instructorId} AND classType='${classType}' )) as a GROUP by a.roll_no `;
         let sql3 = `SELECT roll_no, name FROM student where class_id =${classId}`;
         let sql4 = `SELECT * FROM class where id = ${classId}`;
         let sql5 = `SELECT name FROM subject where code = "${subjectCode}"`;
         let result, counts, students, classes, subjects;
 
         try {
+;
             result = await db.query(sql1);
-            counts = await db.query(sql2);
+           // counts = await db.query(sql2);
             students = await db.query(sql3);
             classes = await db.query(sql4);
             subjects = await db.query(sql5);
-
+;
             let ids = new Set(result.map((item) => parseInt(item.id)));
 
             ids.forEach((element) => {
@@ -243,10 +249,6 @@ router.get(
                 attendanceList[element.id]["date"] = element.attendance_date;
                 attendanceList[element.id]["students"].push(element.roll_no);
             });
-            counts.forEach((item) => {
-                presentCount.push([item.roll_no, item.count]);
-            });
-            presentCount = Object.fromEntries(presentCount);
             details.batch = classes[0].batch;
             details.program = classes[0].program_id;
             details.section = classes[0].class_group;
@@ -258,6 +260,7 @@ router.get(
             });
         } catch (err) {
             console.log(err);
+;
             res.status(402).send("not found");
         }
     }
@@ -280,19 +283,20 @@ router.get(
         let attendanceList = [];
         let presentCount = [];
         let sql1 = `SELECT  * from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no) where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}'  AND classType='${classType}' ) order by attendance_date`;
-        let sql2 = `SELECT count(a.id) as count, a.roll_no FROM (SELECT attendance.roll_no,id from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no)  where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}'  AND classType='${classType}' )) as a GROUP by a.roll_no `;
+       // let sql2 = `SELECT count(a.id) as count, a.roll_no FROM (SELECT attendance.roll_no,id from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no)  where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}'  AND classType='${classType}' )) as a GROUP by a.roll_no `;
         let sql3 = `SELECT roll_no, name FROM student where class_id =${classId}`;
         let sql4 = `SELECT * FROM class where id = ${classId}`;
         let sql5 = `SELECT name FROM subject where code = "${subjectCode}"`;
         let result, counts, students, classes, subjects;
 
         try {
+;
             result = await db.query(sql1);
-            counts = await db.query(sql2);
+            //counts = await db.query(sql2);
             students = await db.query(sql3);
             classes = await db.query(sql4);
             subjects = await db.query(sql5);
-
+;
             let ids = new Set(result.map((item) => parseInt(item.id)));
 
             ids.forEach((element) => {
@@ -304,10 +308,6 @@ router.get(
                 attendanceList[element.id]["date"] = element.attendance_date;
                 attendanceList[element.id]["students"].push(element.roll_no);
             });
-            counts.forEach((item) => {
-                presentCount.push([item.roll_no, item.count]);
-            });
-            presentCount = Object.fromEntries(presentCount);
             details.batch = classes[0].batch;
             details.program = classes[0].program_id;
             details.section = classes[0].class_group;
@@ -319,6 +319,7 @@ router.get(
             });
         } catch (err) {
             console.log(err);
+;
             res.status(402).send("not found");
         }
     }
@@ -334,25 +335,25 @@ router.post("/edit/:_id", auth, async (req, res) => {
         roll_nums.push([parseInt(req.params._id), item]);
     });
 
-    try {
+    try {;
         await db.query(
             `DELETE FROM attendance WHERE details_id = ${req.params._id}`
         );
         await db.query(
             `Insert into attendance (details_id, roll_no) values ?`,
             [roll_nums]
-        );
+        );;
         res.status(200).send("done");
         console.log("Record Updated");
     } catch (err) {
-        console.log(err);
+        console.log(err);;
          res.status(402).send("not found");
 
     }
 });
 
 router.get("/delete/:_id", auth, async (req, res) => {
-    try {
+    try {;
         await db.query(
             `DELETE FROM attendance WHERE details_id = ${parseInt(
                 req.params._id
@@ -362,13 +363,13 @@ router.get("/delete/:_id", auth, async (req, res) => {
             `DELETE FROM attendanceDetails WHERE id = ${parseInt(
                 req.params._id
             )}`
-        );
+        );;
         console.log("One Record Deleted");
         res.status(200).send("ok");
     } catch (err) {
 
-        console.log(err);
-        res.status(402).send("not found");
+        console.log(err);;
+        res.status(402).send("error");
     }
   
 });
@@ -379,7 +380,7 @@ router.get("/deleteAll/:class/:subject/:type", auth, async (req, res) => {
     }' AND subject_code='${req.params.subject}' AND class_id=${
         req.params.class
     } AND instructor_id=${parseInt(user)})`;
-    try {
+    try {;
         let result = await db.query(sql);
         result.forEach(async (record) => {
             await db.query(
@@ -389,12 +390,13 @@ router.get("/deleteAll/:class/:subject/:type", auth, async (req, res) => {
                 `DELETE FROM attendanceDetails WHERE id = ${record.id}`
             );
             console.log("Record Deleted");
-            res.status(402).send("not found");
+
+            res.status(402).send("error");
         });
         
     } catch (err) {
         console.log(err);
-        res.status(402).send("not found");
+        res.status(402).send("error");
     }
 });
 

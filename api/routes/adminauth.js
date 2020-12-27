@@ -22,7 +22,6 @@ router.post("/login", async function (req, res, next) {
     console.log(sql)
   
     try {
-    
         let result = await db.query(sql)
         if (!result) {
             res.json({ message: "not found" })
@@ -31,7 +30,7 @@ router.post("/login", async function (req, res, next) {
         const token =  jwt.sign({usr},  JWT_KEY, {
             expiresIn: 1800,
         });
-        
+       
         res.status(200).json({ token:token });
 
 
