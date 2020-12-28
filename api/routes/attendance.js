@@ -325,6 +325,23 @@ router.get(
     }
 );
 
+//summary of a class
+router.get("/getSummary", async(req, res)=>{
+let batch="074"
+let program="BCT"
+let section = "A"
+let sql=`SELECT classType, code, name, AVG(total) FROM ( SELECT attendanceDetails.id, classType, subject_code,class.batch, class.program_id, class_group FROM attendanceDetails JOIN class ON class_id=class.id WHERE class.batch='${batch}'AND class.program_id='${program}' AND class.class_group='${section}') as attendanceDetails JOIN subject on subject.code=attendanceDetails.subject_code JOIN (SELECT details_id, count(roll_no) as total FROM attendance GROUP BY details_id) as a on a.details_id=attendanceDetails.id GROUP BY batch,program_id,class_group,classType, code, name`
+let result;
+try{result= await db.query(sql);
+console.log(result);
+res.send(result)
+}
+catch(err)
+{console.log(err);
+    res.send(err)
+}
+})
+
 
 router.post("/edit/:_id", auth, async (req, res) => {
     var body = req.body.students;
