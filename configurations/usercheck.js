@@ -10,13 +10,9 @@ const isAuth = (req, res, next) => {
     return next();
   }
  
-  let token =req.headers.authorization; 
+  let token =req.cookies['attendance-jwt-token']
 
-  if (!token) {
-  
-     res.status(401).send({ message: "No token provided!" });
-  }
-  
+
   
   jwt.verify(token, JWT_KEY, (err, decoded) => {
     

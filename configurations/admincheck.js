@@ -10,7 +10,7 @@ const isAdmin = (req, res, next) => {
     return next();
   }
 
-  //if using postmn--- let token =JSON.parse(req.headers.authorization); 
+ 
   let token =req.cookies['attendance-jwtadmin-token']
   if (!token) {
   

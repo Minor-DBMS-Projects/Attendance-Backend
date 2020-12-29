@@ -9,7 +9,6 @@ const fs = require("fs");
 
 //instructor can fetch recent of attendance data
 router.get("/getRecent/:numData", auth, async (req, res, next) => {
-  
     const numData = req.params.numData;
     const _id = req.params._id;
     let q1 = `SELECT DISTINCT class_id as class,
@@ -36,7 +35,6 @@ router.get("/getRecent/:numData", auth, async (req, res, next) => {
     }
 });
 
-
 //get the selected class data for atteandance
 router.post("/take", auth, async (req, res, next) => {
     batch = req.body.batch;
@@ -60,9 +58,7 @@ router.post("/take", auth, async (req, res, next) => {
     }
     if (req.body.subject === undefined) {
         try {
-
             subjects = await db.query(q2);
-
         } catch (err) {
             console.log("could not get the subjects!" + err);
 
@@ -114,11 +110,9 @@ router.post("/submit", auth, async (req, res, next) => {
         console.log("Couldn't save attendance" + "  " + err);
         res.status(402).send("not found");
     }
-    
 });
 
 //select class for online class attendance
-
 
 async function insertOnlineRecord(details, names) {
     let detailsQuery = `insert ignore into attendanceDetails(classType, subject_code, class_id, attendance_date, instructor_id) values (?, ?, ?, ?, ?)`;
@@ -158,7 +152,8 @@ router.post(
         let path = req.file.path;
         let results = [];
         let final = [];
-      await   fs.createReadStream(path, "utf16le")
+        await fs
+            .createReadStream(path, "utf16le")
             .pipe(parser())
             .on("data", (data) => results.push(data))
             .on("end", () => {
@@ -177,7 +172,7 @@ router.post(
                         subject: req.body.subject_code
                             .toString()
                             .substring(0, 5),
-                        instructorId:req.user
+                        instructorId: req.user,
                     },
                     nameList
                 );
@@ -191,18 +186,16 @@ router.post(
                             subject: req.body.subject_code
                                 .toString()
                                 .substring(0, 5),
-                            instructorId:req.user
+                            instructorId: req.user,
                         },
                         nameList
                     );
                 }
-  
             });
-            fs.unlink(path, function (delerr) {
-                if (delerr) throw delerr;
-                res.status(200).send("done")
-            }); 
-
+        fs.unlink(path, function (delerr) {
+            if (delerr) throw delerr;
+            res.status(200).send("done");
+        });
     }
 );
 
@@ -231,13 +224,11 @@ router.get(
         let result, counts, students, classes, subjects;
 
         try {
-;
             result = await db.query(sql1);
-           // counts = await db.query(sql2);
+            // counts = await db.query(sql2);
             students = await db.query(sql3);
             classes = await db.query(sql4);
             subjects = await db.query(sql5);
-;
             let ids = new Set(result.map((item) => parseInt(item.id)));
 
             ids.forEach((element) => {
@@ -260,7 +251,6 @@ router.get(
             });
         } catch (err) {
             console.log(err);
-;
             res.status(402).send("not found");
         }
     }
@@ -283,20 +273,18 @@ router.get(
         let attendanceList = [];
         let presentCount = [];
         let sql1 = `SELECT  * from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no) where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}'  AND classType='${classType}' ) order by attendance_date`;
-       // let sql2 = `SELECT count(a.id) as count, a.roll_no FROM (SELECT attendance.roll_no,id from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no)  where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}'  AND classType='${classType}' )) as a GROUP by a.roll_no `;
+        // let sql2 = `SELECT count(a.id) as count, a.roll_no FROM (SELECT attendance.roll_no,id from attendanceDetails JOIN attendance on attendanceDetails.id=attendance.details_id JOIN student on (attendanceDetails.class_id= student.class_id AND student.roll_no=attendance.roll_no)  where (attendanceDetails.class_id =${classId} AND subject_code ='${subjectCode}'  AND classType='${classType}' )) as a GROUP by a.roll_no `;
         let sql3 = `SELECT roll_no, name FROM student where class_id =${classId}`;
         let sql4 = `SELECT * FROM class where id = ${classId}`;
         let sql5 = `SELECT name FROM subject where code = "${subjectCode}"`;
         let result, counts, students, classes, subjects;
 
         try {
-;
             result = await db.query(sql1);
             //counts = await db.query(sql2);
             students = await db.query(sql3);
             classes = await db.query(sql4);
             subjects = await db.query(sql5);
-;
             let ids = new Set(result.map((item) => parseInt(item.id)));
 
             ids.forEach((element) => {
@@ -319,29 +307,27 @@ router.get(
             });
         } catch (err) {
             console.log(err);
-;
             res.status(402).send("not found");
         }
     }
 );
 
 //summary of a class
-router.get("/getSummary",auth, async(req, res)=>{
-let batch="074"
-let program="BCT"
-let section = "A"
-let sql=`SELECT classType, code, name, AVG(total) FROM ( SELECT attendanceDetails.id, classType, subject_code,class.batch, class.program_id, class_group FROM attendanceDetails JOIN class ON class_id=class.id WHERE class.batch='${batch}'AND class.program_id='${program}' AND class.class_group='${section}') as attendanceDetails JOIN subject on subject.code=attendanceDetails.subject_code JOIN (SELECT details_id, count(roll_no) as total FROM attendance GROUP BY details_id) as a on a.details_id=attendanceDetails.id GROUP BY batch,program_id,class_group,classType, code, name`
-let result;
-try{result= await db.query(sql);
-console.log(result);
-res.send(result)
-}
-catch(err)
-{console.log(err);
-    res.send(err)
-}
-})
-
+router.post("/getSummary",auth, async (req, res) => {
+    let batch = req.body.batch;
+    let program = req.body.program;
+    let section = req.body.section;
+    let sql = `SELECT classType, code, name, AVG(total) as average FROM ( SELECT attendanceDetails.id, classType, subject_code,class.batch, class.program_id, class_group FROM attendanceDetails JOIN class ON class_id=class.id WHERE class.batch='${batch}'AND class.program_id='${program}' AND class.class_group='${section}') as attendanceDetails JOIN subject on subject.code=attendanceDetails.subject_code JOIN (SELECT details_id, count(roll_no) as total FROM attendance GROUP BY details_id) as a on a.details_id=attendanceDetails.id GROUP BY batch,program_id,class_group,classType, code, name`;
+    let result;
+    try {
+        result = await db.query(sql);
+        console.log(result);
+        res.send(result);
+    } catch (err) {
+        console.log(err);
+        res.send(err);
+    }
+});
 
 router.post("/edit/:_id", auth, async (req, res) => {
     var body = req.body.students;
@@ -352,25 +338,24 @@ router.post("/edit/:_id", auth, async (req, res) => {
         roll_nums.push([parseInt(req.params._id), item]);
     });
 
-    try {;
+    try {
         await db.query(
             `DELETE FROM attendance WHERE details_id = ${req.params._id}`
         );
         await db.query(
             `Insert into attendance (details_id, roll_no) values ?`,
             [roll_nums]
-        );;
+        );
         res.status(200).send("done");
         console.log("Record Updated");
     } catch (err) {
-        console.log(err);;
-         res.status(402).send("not found");
-
+        console.log(err);
+        res.status(402).send("not found");
     }
 });
 
 router.get("/delete/:_id", auth, async (req, res) => {
-    try {;
+    try {
         await db.query(
             `DELETE FROM attendance WHERE details_id = ${parseInt(
                 req.params._id
@@ -380,15 +365,13 @@ router.get("/delete/:_id", auth, async (req, res) => {
             `DELETE FROM attendanceDetails WHERE id = ${parseInt(
                 req.params._id
             )}`
-        );;
+        );
         console.log("One Record Deleted");
         res.status(200).send("ok");
     } catch (err) {
-
-        console.log(err);;
+        console.log(err);
         res.status(402).send("error");
     }
-  
 });
 
 router.get("/deleteAll/:class/:subject/:type", auth, async (req, res) => {
@@ -397,7 +380,7 @@ router.get("/deleteAll/:class/:subject/:type", auth, async (req, res) => {
     }' AND subject_code='${req.params.subject}' AND class_id=${
         req.params.class
     } AND instructor_id=${parseInt(user)})`;
-    try {;
+    try {
         let result = await db.query(sql);
         result.forEach(async (record) => {
             await db.query(
@@ -410,7 +393,6 @@ router.get("/deleteAll/:class/:subject/:type", auth, async (req, res) => {
 
             res.status(402).send("error");
         });
-        
     } catch (err) {
         console.log(err);
         res.status(402).send("error");
