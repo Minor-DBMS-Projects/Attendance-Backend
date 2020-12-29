@@ -1,6 +1,5 @@
 let express = require("express");
 let router = express.Router();
-let { auth } = require("../../configurations/usercheck");
 let { isAdmin} = require("../../configurations/admincheck");
 let db = require("./database");
 var jwt = require("jsonwebtoken");
@@ -16,17 +15,20 @@ router.get("/authenticate",isAdmin, (req, res) => {
 
 
 router.post("/login", async function (req, res, next) {
-    const { password } = req.body;
+    const password  = req.body.body.password;
+   
+    let sql = `SELECT * FROM authentication`;
     
-    let sql = `SELECT * FROM authentication WHERE value='${password}'`;
-    console.log(sql)
-  
     try {
         let result = await db.query(sql)
         if (!result) {
-            res.json({ message: "not found" })
+            res.status(401).json({ message: "not found" })
         }
       const usr='admin'
+      const isMatch = await bcrypt.compare(password, result[0].value);
+      if (!isMatch) {
+          res.status(401).json({ message: "not found" })
+      }
         const token =  jwt.sign({usr},  JWT_KEY, {
             expiresIn: 1800,
         });

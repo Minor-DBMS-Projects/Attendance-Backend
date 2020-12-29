@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-
+const bcrypt = require("bcryptjs");
 const { databaseConfig } = require('../../configurations/configs');
 
 class Database {
@@ -68,19 +68,24 @@ class Database {
         const sql2 = 'CREATE TABLE IF NOT EXISTS instructor (id INT UNIQUE KEY AUTO_INCREMENT NOT NULL, code  varchar(16), name varchar(64), PRIMARY KEY(code), password varchar(255), department_id varchar(16),FOREIGN KEY(department_id) REFERENCES department(id) ON DELETE CASCADE)';
         const sql3 = 'CREATE TABLE IF NOT EXISTS subject (code varchar(16),PRIMARY KEY(code), name varchar(64))';
         const sql4 = 'CREATE TABLE IF NOT EXISTS subjectDetails (year INT, part INT, code varchar(16),FOREIGN KEY(code) REFERENCES subject(code) , program_id varchar(16),FOREIGN KEY(program_id) REFERENCES program(id) ON DELETE CASCADE)';
-        const sql5 = 'CREATE TABLE IF NOT EXISTS authentication (value varchar(255))';
-        const sql6 = 'CREATE TABLE IF NOT EXISTS class (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL, batch varchar(16), class_group varchar(16),program_id varchar(16), UNIQUE KEY (batch, program_id, class_group), FOREIGN KEY (program_id) REFERENCES program(id) ON DELETE CASCADE)';
-        const sql7 = 'CREATE TABLE IF NOT EXISTS student (roll_no varchar(16), name varchar(64),class_id INT,  FOREIGN KEY(class_id) REFERENCES class(id) ON DELETE CASCADE, UNIQUE KEY (roll_no, class_id))';
-        const sql8 = 'CREATE TABLE IF NOT EXISTS attendanceDetails (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL, classType varchar(16), subject_code varchar(16), class_id INT, attendance_date DATE, instructor_id INT )';
-        const sql9 = 'CREATE TABLE IF NOT EXISTS attendance(details_id INT ,roll_no varchar(16))';
-        const sql10 = `ALTER TABLE attendance
+        const sql5='DROP TABLE authentication'
+        const sql6 = 'CREATE TABLE IF NOT EXISTS authentication (value varchar(255))';
+        let salt = await bcrypt.genSalt(10);
+        let pass = await bcrypt.hash(process.env.ADMIN_KEY, salt);
+        const sql7=`INSERT INTO authentication (value) values ('${pass}')`;
+        const sql8 = 'CREATE TABLE IF NOT EXISTS class (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL, batch varchar(16), class_group varchar(16),program_id varchar(16), UNIQUE KEY (batch, program_id, class_group), FOREIGN KEY (program_id) REFERENCES program(id) ON DELETE CASCADE)';
+        const sql9 = 'CREATE TABLE IF NOT EXISTS student (roll_no varchar(16), name varchar(64),class_id INT,  FOREIGN KEY(class_id) REFERENCES class(id) ON DELETE CASCADE, UNIQUE KEY (roll_no, class_id))';
+        const sql10 = 'CREATE TABLE IF NOT EXISTS attendanceDetails (id INT PRIMARY KEY AUTO_INCREMENT NOT NULL, classType varchar(16), subject_code varchar(16), class_id INT, attendance_date DATE, instructor_id INT )';
+        const sql11 = 'CREATE TABLE IF NOT EXISTS attendance(details_id INT ,roll_no varchar(16))';
+        const sql12 = `ALTER TABLE attendance
         ADD FOREIGN KEY(details_id) REFERENCES attendanceDetails(id) ON DELETE CASCADE
         `;
-        const sql11 = `ALTER TABLE attendanceDetails
+        const sql13 = `ALTER TABLE attendanceDetails
                           ADD FOREIGN KEY(subject_code) REFERENCES subject(code) ON DELETE CASCADE,
                           ADD FOREIGN KEY(instructor_id) REFERENCES instructor(id) ON DELETE SET NULL,
                           ADD FOREIGN KEY(class_id) REFERENCES class(id) ON DELETE CASCADE
                           `;
+                          
         try {
             await this.query(sql0)
             await this.query(sql1)
@@ -94,6 +99,8 @@ class Database {
             await this.query(sql9)
             await this.query(sql10)
             await this.query(sql11)
+            await this.query(sql12)
+            await this.query(sql13)
 
         }
         catch (err) {

@@ -268,7 +268,7 @@ router.get(
 //report of a class irrespective of instructor
 
 router.get(
-    "/allRecord/:classId/:subjectCode/:classType",
+    "/allRecord/:classId/:subjectCode/:classType",auth,
   
     async (req, res, next) => {
         const classId = req.params.classId;
@@ -326,7 +326,7 @@ router.get(
 );
 
 //summary of a class
-router.get("/getSummary", async(req, res)=>{
+router.get("/getSummary",auth, async(req, res)=>{
 let batch="074"
 let program="BCT"
 let section = "A"

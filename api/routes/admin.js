@@ -3,16 +3,17 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const http = require("follow-redirects").http;
 const router = express.Router();
+let {isAdmin} = require("../../configurations/admincheck");
 
-router.post("/add-user", async function (req, res, next) {
+router.post("/add-user",isAdmin, async function (req, res, next) {
     let salt = await bcrypt.genSalt(10);
     let pass = await bcrypt.hash(req.body.password, salt);
 
     let sql = `INSERT IGNORE INTO instructor (name, password, code, department_id) values ("${req.body.username}","${pass}","${req.body.code}", "${req.body.dept}")`;
     try {
        
-        await db.query(sql);
-        res.status(200).send("ok")
+    await db.query(sql);
+    res.status(200).send("ok")
     } catch (err) {
         console.log(err);
         res.status(402).send(err)
@@ -99,7 +100,7 @@ function addClass(program, batch, group) {
 
 }
 
-router.post("/add-class", (req, res) => {
+router.post("/add-class",isAdmin, (req, res) => {
     program = req.body.program.toString();
     batch = req.body.batch.toString();
     section = req.body.section.toString();
@@ -111,7 +112,7 @@ router.post("/add-class", (req, res) => {
     res.status(200).send("ok")
 });
 
-router.post("/add-sub", (req, res) => {
+router.post("/add-sub", isAdmin,(req, res) => {
     program = req.body.program.toString();
     year = parseInt(req.body.year);
     part = parseInt(req.body.part);
@@ -167,7 +168,7 @@ router.post("/add-sub", (req, res) => {
     );
 });
 
-router.post("/edit-user", async function (req, res, next) {
+router.post("/edit-user",isAdmin, async function (req, res, next) {
     let q1 = `UPDATE instructor set name="${req.body.username}", code="${req.body.code}", department_id="${req.body.dept}" WHERE id=${req.body.id}`;
     try {
        
@@ -180,7 +181,7 @@ router.post("/edit-user", async function (req, res, next) {
     }
 });
 
-router.post('/edit-user-key', async function (req, res, next) {
+router.post('/edit-user-key',isAdmin, async function (req, res, next) {
     try {
 
         const salt = await bcrypt.genSalt();
@@ -203,7 +204,7 @@ router.post('/edit-user-key', async function (req, res, next) {
 
 );
 
-router.post("/delete-user", async function (req, res, next) {
+router.post("/delete-user",isAdmin, async function (req, res, next) {
     let q1 = `DELETE FROM instructor WHERE id=${req.body.id}`;
     try {
         
@@ -216,7 +217,7 @@ router.post("/delete-user", async function (req, res, next) {
     }
 });
 
-router.post("/add-program", async function (req, res, next) {
+router.post("/add-program",isAdmin, async function (req, res, next) {
     let q1 = `INSERT IGNORE INTO program (id, name, department_id) values ("${req.body.id}", "${req.body.name}", "${req.body.dept}")`;
     try {
        
@@ -229,7 +230,7 @@ router.post("/add-program", async function (req, res, next) {
     }
 });
 
-router.post("/edit-program", async function (req, res, next) {
+router.post("/edit-program",isAdmin, async function (req, res, next) {
     let q1 = `UPDATE program set id="${req.body.id}", name="${req.body.name}", department_id="${req.body.dept}" WHERE id="${req.body.previd}"`;
     try {
         
@@ -242,7 +243,8 @@ router.post("/edit-program", async function (req, res, next) {
     }
 });
 
-router.post("/add-department", async function (req, res, next) {
+router.post("/add-department",isAdmin, async function (req, res, next) {
+    console.log(req)
     let q1 = `INSERT IGNORE INTO department (id, name) values ("${req.body.id}", "${req.body.name}")`;
     try {
        
@@ -255,7 +257,7 @@ router.post("/add-department", async function (req, res, next) {
     }
 });
 
-router.post("/edit-department", async function (req, res, next) {
+router.post("/edit-department",isAdmin, async function (req, res, next) {
     let q1 = `UPDATE department set id="${req.body.id}", name="${req.body.name}" WHERE id="${req.body.previd}";`;
     try {
         
@@ -268,7 +270,7 @@ router.post("/edit-department", async function (req, res, next) {
     }
 });
 
-router.post("/delete-program", async function (req, res, next) {
+router.post("/delete-program",isAdmin, async function (req, res, next) {
     let q1 = `DELETE FROM program WHERE id="${req.body.id}"`;
     try {
         
@@ -281,7 +283,7 @@ router.post("/delete-program", async function (req, res, next) {
     }
 });
 
-router.post("/delete-department", async function (req, res, next) {
+router.post("/delete-department",isAdmin, async function (req, res, next) {
     let q1 = `DELETE FROM department WHERE id="${req.body.id}"`;
     try {
         

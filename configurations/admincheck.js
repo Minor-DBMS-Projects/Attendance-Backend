@@ -9,10 +9,9 @@ const isAdmin = (req, res, next) => {
   if (req.method === "OPTIONS") {
     return next();
   }
- 
-  //if using postmn--- let token =JSON.parse(req.headers.authorization); 
-  let token =req.headers.authorization; 
 
+  //if using postmn--- let token =JSON.parse(req.headers.authorization); 
+  let token =req.cookies['attendance-jwtadmin-token']
   if (!token) {
   
     return res.status(401).send({ message: "No token provided!" });
